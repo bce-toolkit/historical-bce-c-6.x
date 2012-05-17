@@ -1,0 +1,7 @@
+There are many modules in BCE kernel, each of them depends on other modules or itself.
+
+The complete BCE kernel has three main modules:
+  * molecule.c     --->      the molecule equation syntax parser.
+  * syntax.c       --->      the chemical equation syntax parser, it will convert the chemical equation to the mathematic equations.
+  * equation.c     --->      mathematic equation solver.
+

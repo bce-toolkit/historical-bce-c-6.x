@@ -1,0 +1,7 @@
+ARCHITECTURE=i686
+CC=$(ARCHITECTURE)-pc-mingw32-gcc
+CC_CONF_FCE=$(CC_CONF) -DCROSS_COMPILER_WIN32 -lbce
+RES=$(ARCHITECTURE)-pc-mingw32-windres
+OUTPUT_FCE=fce.exe
+OBJ_FCE+=version.res
+

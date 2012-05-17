@@ -1,0 +1,10 @@
+# for GNU/Linux, FreeBSD, OpenBSD, NetBSD, MacOSX, Solaris, openSolaris, AIX, HP-UNIX, MINIX, and other UNIX-based or UNIX-like systems.
+CC=cc
+CC_CONF+=-fPIC
+LIBRARY_CONF=-shared -fPIC -Wl,--version-script=$(CONFIG_API)
+# for Debug:
+# LIBRARY_CONF+=-ggdb3
+LIBRARY_OUT=libbce.so
+RES=./version-invalid.sh
+INSTALLER=install.sh
+

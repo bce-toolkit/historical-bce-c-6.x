@@ -1,0 +1,10 @@
+# for Microsoft Windows only
+ARCHITECTURE=i686
+CC=$(ARCHITECTURE)-pc-mingw32-gcc
+CC_CONF+=-DCROSS_COMPILER_WIN32
+OBJ_LIBRARY+=version.res
+LIBRARY_OUT=libbce.dll
+LIBRARY_CONF=-shared -Wl,--version-script=$(CONFIG_API)
+RES=$(ARCHITECTURE)-pc-mingw32-windres
+INSTALLER=install-invalid.sh
+

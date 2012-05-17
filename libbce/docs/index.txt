@@ -1,0 +1,8 @@
+principle/
+    gauss.txt                           Gauss elimination
+    gcd.txt                             the Euclidean algorithm
+    math_model.odt                      the mathematic model of BCE
+    images/                             Pictures used in documents
+
+modules.txt                             This file explained the dependency between modules.
+

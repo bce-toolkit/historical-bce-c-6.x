@@ -1,0 +1,6 @@
+CC=gcc
+CC_CONF_FCE=$(CC_CONF) -lbce
+RES=
+OUTPUT_FCE=fce
+RES=./version-invalid.sh
+

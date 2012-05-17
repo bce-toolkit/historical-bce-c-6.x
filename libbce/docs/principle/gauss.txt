@@ -1,0 +1,50 @@
+In linear algebra, Gaussian elimination is an algorithm for solving systems of linear equations. It can also be used to find the rank of a matrix, to calculate the determinant of a matrix, and to calculate the inverse of an invertible square matrix. The method is named after Carl Friedrich Gauss, but it was not invented by him.
+
+Elementary row operations are used to reduce a matrix to what is called triangular form (in numerical analysis) or row echelon form (in abstract algebra). Gauss–Jordan elimination, an extension of this algorithm, reduces the matrix further to diagonal form, which is also known as reduced row echelon form. Gaussian elimination alone is sufficient for many applications, and requires fewer calculations than the Gauss–Jordan version.
+
+HISTORY
+
+The method of Gaussian elimination appears in Chapter Eight, Rectangular Arrays, of the important Chinese mathematical text Jiuzhang suanshu or The Nine Chapters on the Mathematical Art. Its use is illustrated in eighteen problems, with two to five equations. The first reference to the book by this title is dated to 179 CE, but parts of it were written as early as approximately 150 BCE. It was commented on by Liu Hui in the 3rd century.
+
+The method in Europe stems from the notes of Isaac Newton. In 1670, he wrote that all the algebra books known to him lacked a lesson for solving simultaneous equations, which Newton then supplied. Cambridge University eventually published the notes as Arithmetica Universalis in 1707 long after Newton left academic life. The notes were widely imitated, which made (what is now called) Gaussian elimination a standard lesson in algebra textbooks by the end of the 18th century. Carl Friedrich Gauss in 1810 devised a notation for symmetric elimination that was adopted in the 19th century by professional hand computers to solve the normal equations of least-squares problems. The algorithm that is taught in high school was named for Gauss only in the 1950s as a result of confusion over the history of the subject.
+
+ALGORITHM OVERVIEW
+
+The process of Gaussian elimination has two parts. The first part (Forward Elimination) reduces a given system to either triangular or echelon form, or results in a degenerate equation with no solution, indicating the system has no solution. This is accomplished through the use of elementary row operations. The second step uses back substitution to find the solution of the system above.
+
+Stated equivalently for matrices, the first part reduces a matrix to row echelon form using elementary row operations while the second reduces it to reduced row echelon form, or row canonical form.
+
+Another point of view, which turns out to be very useful to analyze the algorithm, is that Gaussian elimination computes a matrix decomposition. The three elementary row operations used in the Gaussian elimination (multiplying rows, switching rows, and adding multiples of rows to other rows) amount to multiplying the original matrix with invertible matrices from the left. The first part of the algorithm computes an LU decomposition, while the second part writes the original matrix as the product of a uniquely determined invertible matrix and a uniquely determined reduced row-echelon matrix.
+
+PSEUDOCODE
+
+As explained above, Gaussian elimination writes a given m × n matrix A uniquely as a product of an invertible m × m matrix S and a row-echelon matrix T. Here, S is the product of the matrices corresponding to the row operations performed.
+
+The formal algorithm to compute T from A follows. We write A[i,j] for the entry in row i, column j in matrix A with 1 being the first index. The transformation is performed "in place", meaning that the original matrix A is lost and successively replaced by T.
+
+// --
+
+i := 1
+j := 1
+while (i ≤ m and j ≤ n) do
+  Find pivot in column j, starting in row i:
+  maxi := i
+  for k := i+1 to m do
+    if abs(A[k,j]) > abs(A[maxi,j]) then
+      maxi := k
+    end if
+  end for
+  if A[maxi,j] ≠ 0 then
+    swap rows i and maxi, but do not change the value of i
+    Now A[i,j] will contain the old value of A[maxi,j].
+    divide each entry in row i by A[i,j]
+    Now A[i,j] will have the value 1.
+    for u := i+1 to m do
+      subtract A[u,j] * row i from row u
+      Now A[u,j] will be 0, since A[u,j] - A[i,j] * A[u,j] = A[u,j] - 1 * A[u,j] = 0.
+    end for
+    i := i + 1
+  end if
+  j := j + 1
+ end while
+

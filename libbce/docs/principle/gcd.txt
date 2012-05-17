@@ -1,0 +1,32 @@
+The Euclidean algorithm is used in mmdiv.c, so we have to explain about it.
+
+In mathematics, the Euclidean algorithm (also called Euclid's algorithm) is an efficient method for computing the greatest common divisor (GCD), also known as the greatest common factor (GCF) or highest common factor (HCF). It is named after the Greek mathematician Euclid, who described it in Books VII and X of his Elements.
+
+GCD(x,y) = {x (x = y); GCD(min(x,y), max(x,y) - min(x,y)) (x != y)}
+
+or:
+
+GCD(x,y) = {x (y = 0); GCD(y, x mod y) (y != 0)}
+
+The GCD of two numbers is the largest number that divides both of them without leaving a remainder. The Euclidean algorithm is based on the principle that the greatest common divisor of two numbers does not change if the smaller number is subtracted from the larger number. For example, 21 is the GCD of 252 and 105 (252 = 21 × 12; 105 = 21 × 5); since 252 − 105 = 147, the GCD of 147 and 105 is also 21. Since the larger of the two numbers is reduced, repeating this process gives successively smaller numbers until one of them is zero. When that occurs, the GCD is the remaining nonzero number. By reversing the steps in the Euclidean algorithm, the GCD can be expressed as a sum of the two original numbers each multiplied by a positive or negative integer, e.g., 21 = [5 × 105] + [(−2) × 252]. This important property is known as Bézout's identity.
+
+The earliest surviving description of the Euclidean algorithm is in Euclid's Elements (c. 300 BC), making it one of the oldest numerical algorithms still in common use. The original algorithm was described only for natural numbers and geometric lengths (real numbers), but the algorithm was generalized in the 19th century to other types of numbers, such as Gaussian integers and polynomials in one variable. This led to modern abstract algebraic notions such as Euclidean domains. The Euclidean algorithm has been generalized further to other mathematical structures, such as knots and multivariate polynomials.
+
+The Euclidean algorithm has many theoretical and practical applications. It may be used to generate almost all the most important traditional musical rhythms used in different cultures throughout the world. It is a key element of the RSA algorithm, a public-key encryption method widely used in electronic commerce. It is used to solve Diophantine equations, such as finding numbers that satisfy multiple congruences (Chinese remainder theorem) or multiplicative inverses of a finite field. The Euclidean algorithm can also be used in constructing continued fractions, in the Sturm chain method for finding real roots of a polynomial, and in several modern integer factorization algorithms. Finally, it is a basic tool for proving theorems in modern number theory, such as Lagrange's four-square theorem and the fundamental theorem of arithmetic (unique factorization).
+
+If implemented using remainders of long division rather than subtractions, Euclid's algorithm computes the GCD of large numbers efficiently: it never requires more division steps than five times the number of digits (base 10) of the smaller integer. This was proved by Gabriel Lamé in 1844, and marks the beginning of computational complexity theory. Methods for improving the algorithm's efficiency were developed in the 20th century.
+
+The Euclidean algorithm is iterative, meaning that the answer is found in a series of steps; the output of each step is used as an input for the next step. Let k be an integer that counts the steps of the algorithm, starting with zero. Thus, the initial step corresponds to k = 0, the next step corresponds to k = 1, and so on.
+
+Each step begins with two nonnegative remainders r(k−1) and r(k−2). Since the algorithm ensures that the remainders decrease steadily with every step, r(k−1) is less than its predecessor r(k−2). The goal of the kth step is to find a quotient qk and remainder rk such that the equation is satisfied.
+
+    a = q(0)b + r(0)
+    b = q(1)r(0) + r(1)
+    r0 = q(2)r(1) + r(2)
+    r1 = q(3)r(2) + r(3)
+    ...
+
+If a is smaller than b, the first step of the algorithm swaps the numbers. For example, if a < b, the initial quotient q(0) equals zero, and the remainder r0 is a. Thus, rk is smaller than its predecessor r(k−1) for all k >= 0.
+
+Since the remainders decrease with every step but can never be negative, a remainder r(N) must eventually equal zero, at which point the algorithm stops. The final nonzero remainder r(N−1) is the greatest common divisor of a and b. The number N cannot be infinite because there are only a finite number of nonnegative integers between the initial remainder r(0) and zero.
+

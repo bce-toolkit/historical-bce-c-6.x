@@ -1,0 +1,32 @@
+FCE - Manual
+
+Before using fce, you have to read this manual.
+
+Synopsis:
+	fce [-o [filename]] [-m [1/2/3]] [filename[filename] (or stdin)] ...
+
+Description:
+	fce is a command-line chemical equation balancer. It supports chemical equations and ion equation.
+
+Options:
+	-h
+		Help: show syntax.
+	-o [filename]
+		Select a file which you want to save the answers in
+	-m
+		Selecte an answer format (from 1 - 3), The default is one.
+		'1' means 'only balanced-prefix-number'
+		'2' means 'only balanced-chemical-equation'
+		'3' means 'both ok'
+
+Sample:
+	fce stdin
+		will wait for user to type the chemical equation, balance it and print the answers on the screen
+	fce -o fce.out stdin
+		will wait for user to type the chemical equation, balance it and save the answers to fce.out
+	fce -o fce.out -m 2 fce.in
+		will balance chemical equations listed in fce.in and save the answers to fce.out
+
+Author:
+	FCE is by Ji WenCong <whs_jwc@163.com>
+
