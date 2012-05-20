@@ -30,6 +30,10 @@
 #include "../include/stream_io.h"
 #include "../include/lang/bce_lang.h"
 
+#ifdef _SINGLE_
+	#include "../single/single.h"
+#endif
+
 #ifdef _WIN32_
 	#define HELPFILE_PATH "help.txt"
 	#define BANNER_PATH "banner.txt"
@@ -81,12 +85,20 @@ int main(int argc, char *argv[], char *envp[]) {
 	}
 	/*  Show the banner  */
 	if (!silent)
-		if (print_textfile(BANNER_PATH, stdout) != LIO_SUCCESS)
-			printf(LANG_ERROR_OPENFILE, BANNER_PATH);
+		#ifdef _SINGLE_
+			printf(SINGLE_BANNER_STR);
+		#else
+			if (print_textfile(BANNER_PATH, stdout) != LIO_SUCCESS)
+				printf(LANG_ERROR_OPENFILE, BANNER_PATH);
+		#endif
 	/*  Show the help  */
 	if (sh)
-		if (print_textfile(HELPFILE_PATH, stdout) != LIO_SUCCESS)
-			printf(LANG_ERROR_OPENFILE, HELPFILE_PATH);
+		#ifdef _SINGLE_
+			printf(SINGLE_HELP_STR);
+		#else
+			if (print_textfile(HELPFILE_PATH, stdout) != LIO_SUCCESS)
+				printf(LANG_ERROR_OPENFILE, HELPFILE_PATH);
+		#endif
 	while(!0) {
 		/*  Show the prompt if stdin refers to tty  */
 		if (isatty(fileno(stdin)))

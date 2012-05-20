@@ -18,8 +18,8 @@ FILETYPE 0x2
 		BLOCK \"040904B0\"
 		{
 			VALUE \"CompanyName\", \"XiaoJSoft Studio.\"
-			VALUE \"FileDescription\", \"BCE Shell\"
-			VALUE \"FileVersion\", \"""$MAJOR"".""$MINOR"".""$REVISION1"".""$REVISION2"" (shell-only)\"
+			VALUE \"FileDescription\", \"BCE Single (Kernel+Shell)\"
+			VALUE \"FileVersion\", \"""$MAJOR"".""$MINOR"".""$REVISION1"".""$REVISION2""\"
 			VALUE \"InternalName\", \"bce.exe\"
 			VALUE \"LegalCopyright\", \"(C) XiaoJSoft Studio. All rights reserved.\"
 			VALUE \"OriginalFilename\", \"bce.exe\"

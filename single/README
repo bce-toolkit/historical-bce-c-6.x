@@ -1,0 +1,1 @@
+This directory contains the BCE application without libbce, but we still suggested you to compile the shell and the kernel manually. If you really don't care about it, you can use this version, it's easier to compile and install.

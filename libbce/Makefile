@@ -12,9 +12,7 @@ make: $(COMMON_INCLUDE) $(OBJ_LIBRARY)
 	@$(CC) $(LIBRARY_CONF) -o $(LIBRARY_OUT) $(OBJ_LIBRARY)
 	@echo "OK!"
 
-$(COMPILE_PLATFORM)_bce.o: kernel/bce.c kernel/../include/bce.h kernel/../include/polynomial.h kernel/../include/fraction.h \
- kernel/../include/blockmem.h kernel/../include/blockconf.h kernel/../include/fraction.h kernel/../include/equation.h \
- kernel/../include/matrix_io.h kernel/../include/syntax.h kernel/../include/polynomial.h
+$(COMPILE_PLATFORM)_bce.o: kernel/bce.c kernel/../include/bce.h kernel/../include/polynomial.h kernel/../include/fraction.h kernel/../include/blockmem.h kernel/../include/blockconf.h kernel/../include/fraction.h kernel/../include/equation.h kernel/../include/matrix_io.h kernel/../include/syntax.h kernel/../include/polynomial.h
 	@echo "Compiling bce.c..."
 	@$(CC) -c kernel/bce.c -o $(COMPILE_PLATFORM)_bce.o $(CC_CONF)
 
@@ -22,14 +20,11 @@ $(COMPILE_PLATFORM)_blockmem.o: lib/blockmem.c lib/../include/blockmem.h lib/../
 	@echo "Compiling blockmem.c..."
 	@$(CC) -c lib/blockmem.c -o $(COMPILE_PLATFORM)_blockmem.o $(CC_CONF)
 
-$(COMPILE_PLATFORM)_equation.o: kernel/equation.c kernel/../include/blockmem.h kernel/../include/blockconf.h kernel/../include/matrix_io.h \
- kernel/../include/fraction.h kernel/../include/mmdiv.h kernel/../include/polynomial.h kernel/../include/blockmem.h \
- kernel/../include/equation.h kernel/../include/polynomial.h
+$(COMPILE_PLATFORM)_equation.o: kernel/equation.c kernel/../include/blockmem.h kernel/../include/blockconf.h kernel/../include/matrix_io.h kernel/../include/fraction.h kernel/../include/mmdiv.h kernel/../include/polynomial.h kernel/../include/blockmem.h kernel/../include/equation.h kernel/../include/polynomial.h
 	@echo "Compiling equation.c..."
 	@$(CC) -c kernel/equation.c -o $(COMPILE_PLATFORM)_equation.o $(CC_CONF)
 
-$(COMPILE_PLATFORM)_polynomial.o: kernel/polynomial.c kernel/../include/blockmem.h kernel/../include/blockconf.h kernel/../include/kasprintf.h \
- kernel/../include/fraction.h kernel/../include/mmdiv.h kernel/../include/polynomial.h kernel/../include/fraction.h kernel/../include/blockmem.h
+$(COMPILE_PLATFORM)_polynomial.o: kernel/polynomial.c kernel/../include/blockmem.h kernel/../include/blockconf.h kernel/../include/kasprintf.h kernel/../include/fraction.h kernel/../include/mmdiv.h kernel/../include/polynomial.h kernel/../include/fraction.h kernel/../include/blockmem.h
 	@echo "Compiling polynomial.c..."
 	@$(CC) -c kernel/polynomial.c -o $(COMPILE_PLATFORM)_polynomial.o $(CC_CONF)
 
@@ -45,14 +40,11 @@ $(COMPILE_PLATFORM)_mmdiv.o: kernel/mmdiv.c kernel/../include/mmdiv.h
 	@echo "Compiling mmdiv.c..."
 	@$(CC) -c kernel/mmdiv.c -o $(COMPILE_PLATFORM)_mmdiv.o $(CC_CONF)
 
-$(COMPILE_PLATFORM)_molecule.o: kernel/molecule.c kernel/../include/blockmem.h kernel/../include/blockconf.h kernel/../include/string_ext.h \
- kernel/../include/element.h kernel/../include/molecule.h kernel/../include/element.h kernel/../include/blockmem.h
+$(COMPILE_PLATFORM)_molecule.o: kernel/molecule.c kernel/../include/blockmem.h kernel/../include/blockconf.h kernel/../include/string_ext.h kernel/../include/element.h kernel/../include/molecule.h kernel/../include/element.h kernel/../include/blockmem.h
 	@echo "Compiling molecule.c..."
 	@$(CC) -c kernel/molecule.c -o $(COMPILE_PLATFORM)_molecule.o $(CC_CONF)
 
-$(COMPILE_PLATFORM)_syntax.o: kernel/syntax.c kernel/../include/fraction.h kernel/../include/polynomial.h kernel/../include/fraction.h \
- kernel/../include/blockmem.h kernel/../include/blockconf.h kernel/../include/string_ext.h kernel/../include/molecule.h \
- kernel/../include/element.h kernel/../include/syntax.h kernel/../include/polynomial.h kernel/../include/kasprintf.h kernel/../include/matrix_io.h
+$(COMPILE_PLATFORM)_syntax.o: kernel/syntax.c kernel/../include/fraction.h kernel/../include/polynomial.h kernel/../include/fraction.h kernel/../include/blockmem.h kernel/../include/blockconf.h kernel/../include/string_ext.h kernel/../include/molecule.h kernel/../include/element.h kernel/../include/syntax.h kernel/../include/polynomial.h kernel/../include/kasprintf.h kernel/../include/matrix_io.h
 	@echo "Compiling syntax.c..."
 	@$(CC) -c kernel/syntax.c -o $(COMPILE_PLATFORM)_syntax.o $(CC_CONF)
 

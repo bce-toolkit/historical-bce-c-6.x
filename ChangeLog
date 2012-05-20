@@ -1,3 +1,6 @@
+Sun May 20 21:59:33 2012 Ji WenCong <whs_jwc@163.com>
+	* Added BCE standalone version
+
 Sun May 20 11:22:49 2012 Ji WenCong <whs_jwc@163.com>
 	* libbce/kernel/syntax.c: Simplified functions, fixed a pointer offset error.
 	* libbce/README: Fixed '4.x' => '6.x'.
