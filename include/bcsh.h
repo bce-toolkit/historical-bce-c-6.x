@@ -1,5 +1,5 @@
 /*
- *	Fast Memory Allocating(FMA) System for Hign Performance Computing
+ *	BCE Shell
  *
  *	Copyright (C) 2011-2012 XiaoJSoft Studio. All Rights Reserved.
  *	Copyright (C) Ji WenCong <whs_jwc@163.com>
@@ -19,26 +19,8 @@
  *
  */
 
-#ifndef BLOCKMEM_DEFINEDED
-	struct block_memory_node {
-		void *ptr;
-		long int pnum;
-		size_t psize;
-	};
-	typedef struct block_memory_node bmem;
-
-	#define BLOCKMEM_SUCCESS 0
-	#define BLOCKMEM_ALLOCATE_ERROR 2
-	#define BLOCKMEM_UNINITIALIZED 4
-
-	#define BLOCKMEM_DEFINEDED
-#endif
-
-bmem empty_block_memory(size_t size_per_page);
-int allocate_block_memory(bmem *p, size_t size, size_t size_per_page);
-int reallocate_block_memory(bmem *p, size_t size);
-void free_block_memory(bmem *p);
-
-/*  Load FMA configurations  */
-#include "blockconf.h"
+#define BCENO_SUCCESS 0
+#define BCENO_IVARG 1
+#define BCENO_NOVALUE 2
+#define BCENO_MEMFAIL 3
 

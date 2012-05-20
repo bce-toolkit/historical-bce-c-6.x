@@ -28,11 +28,22 @@
 #include "../include/element.h"
 #include "../include/molecule.h"
 
+/*
+ *	solve_molecule_hydrate()
+ *
+ *	Analyze the composition of a molecular formula with hydrate (e.g: "CuSO4.5H2O", "Na2S.Na2SO4.3H2O"...)
+ *
+ *	@begin, @end: pointer 'begin' points to the head of a string, pointer 'end' points to the end of the string.
+ *	@eptr: storage pool of elements
+ *	@ecount: counter of the storage pool 'eptr'
+ *	@suffix: digits after or before the molecular formula
+ */
 int solve_molecule_hydrate(char *begin, char *end, bmem *eptr, int *ecount, int suffix) {
 	char *dot = begin;
 	int ret, b_stack = 0;
 
 	for (; begin <= end; begin++) {
+		/*  Ignore brackets in the formula  */
 		switch (*begin) {
 			case '(':
 				b_stack++;
@@ -44,6 +55,7 @@ int solve_molecule_hydrate(char *begin, char *end, bmem *eptr, int *ecount, int 
 		if (b_stack != 0)
 			continue;
 
+		/*  Split the molecular formula  */
 		if (*begin == '.' || begin == end) {
 			ret = solve_molecule(dot, begin == end ? begin : begin - 1, eptr, ecount, suffix);
 			if (ret != ERRNO_MOLECULE_SUCCESS)
@@ -52,12 +64,23 @@ int solve_molecule_hydrate(char *begin, char *end, bmem *eptr, int *ecount, int 
 		}
 	}
 
+	/*  Check the bracket stack  */
 	if (b_stack != 0)
 		return(ERRNO_MOLECULE_SYNTAX);
 	else
 		return(ERRNO_MOLECULE_SUCCESS);
 }
 
+/*
+ *	solve_molecule()
+ *
+ *	Analyze the composition of a molecular formula without hydrate
+ *
+ *	@begin, @end: pointer 'begin' points to the head of a string, pointer 'end' points to the end of the string.
+ *	@eptr: storage pool of elements
+ *	@ecount: counter of the storage pool 'eptr'
+ *	@suffix: digits after or before the molecular formula
+ */
 int solve_molecule(char *begin, char *end, bmem *eptr, int *ecount, int suffix) {
 	char *ptr, *b_ptr, *temp, *start;
 	int b_stack, p_ret, b_prefix;
@@ -100,7 +123,7 @@ int solve_molecule(char *begin, char *end, bmem *eptr, int *ecount, int suffix) 
 		if (reallocate_block_memory(eptr, (++(*ecount)) * sizeof(element)) != BLOCKMEM_SUCCESS)
 			return(ERRNO_MOLECULE_MEMORY);
 
-		eap_ptr = (element*)eptr->ptr + *ecount - 1;
+		eap_ptr = (element*)eptr->ptr + (*ecount) - 1;
 
 		eap_ptr->begin = start;
 		eap_ptr->end = start;

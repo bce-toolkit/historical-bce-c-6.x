@@ -21,6 +21,6 @@
 
 #include "polynomial.h"
 
-exp *balance_chemical_equation(char *nptr, int *count);
-char *automatic_balance_ce(char *nptr);
+exp* balance_chemical_equation(char *nptr, int *count);
+char* automatic_balance_ce(char *nptr);
 

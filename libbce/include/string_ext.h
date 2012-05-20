@@ -26,7 +26,7 @@
 	#define STRLIB_VALUES_DEFINED
 #endif
 
-char *strpush(const char *begin, const char *end);
+char* strpush(const char *begin, const char *end);
 void pspush(const char *begin, const char *end);
 int strpcomp(const char *begin, const char *end, const char *data);
 int strpisnum(const char *begin, const char *end);

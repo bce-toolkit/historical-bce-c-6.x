@@ -1,7 +1,7 @@
 /*
- *	Keyboard Input
+ *	BCE Shell Language File
  *
- *	Copyright (C) 2011 XiaoJSoft Studio. All Rights Reserved.
+ *	Copyright (C) 2011-2012 XiaoJSoft Studio. All Rights Reserved.
  *	Copyright (C) Ji WenCong <whs_jwc@163.com>
  *
  *	This program is free software: you can redistribute it and/or modify
@@ -19,5 +19,9 @@
  *
  */
 
-char *fline(FILE *fp, int *lastchar);
-
+#define LANG_ERROR_MODE "Invalid mode '%s'.\n"
+#define LANG_ERROR_OPENFILE "Failed to open '%s'.\n"
+#define LANG_ERROR_CE1 "-\n"
+#define LANG_ERROR_CE2 "-, "
+#define CMD_PROMPT "[CE]# "
+#define CMD_EXIT "exit"

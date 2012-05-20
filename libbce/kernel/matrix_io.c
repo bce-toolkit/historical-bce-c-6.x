@@ -24,8 +24,16 @@
 #include "../include/fraction.h"
 #include "../include/matrix_io.h"
 
-MATADT *get_matrix_header(MATADT **matrix, int my) {
-	MATADT *min, **eptr = matrix + my;
+/*
+ *	get_matrix_header()
+ *
+ *	Get the first node of the memory pool of a matrix.
+ *
+ *	@matrix: the matrix
+ *	@my: the number of rows of the matrix
+ */
+fact* get_matrix_header(fact **matrix, int my) {
+	fact *min, **eptr = matrix + my;
 
 	for (min = *matrix; matrix < eptr; matrix++)
 		if (*matrix < min)
@@ -34,19 +42,35 @@ MATADT *get_matrix_header(MATADT **matrix, int my) {
 	return(min);
 }
 
-void free_matrix(MATADT **matrix, int my) {
+/*
+ *	free_matrix()
+ *
+ *	Destroy a matrix.
+ *
+ *	@matrix: the matrix
+ *	@my: the number of rows of the matrix
+ */
+void free_matrix(fact **matrix, int my) {
 	free(get_matrix_header(matrix, my));
 	free(matrix);
 }
 
-MATADT **allocate_matrix(int x, int y) {
-	MATADT *area, **matrix, **ptr;
+/*
+ *	allocate_matrix()
+ *
+ *	Allocate a matrix.
+ *
+ *	@x: the number of columns of the matrix
+ *	@y: the number of rows of the matrix
+ */
+fact** allocate_matrix(int x, int y) {
+	fact *area, **matrix, **ptr;
 
-	area = (MATADT*) malloc(x * y * sizeof(MATADT));
+	area = (fact*) malloc(x * y * sizeof(fact));
 	if (!area)
 		return(NULL);
 
-	matrix = (MATADT**) malloc(y * sizeof(MATADT*));
+	matrix = (fact**) malloc(y * sizeof(fact*));
 	if (!matrix) {
 		free(area);
 		return(NULL);
@@ -58,11 +82,30 @@ MATADT **allocate_matrix(int x, int y) {
 	return(matrix);
 }
 
-void write_matrix(MATADT **matrix, int offset_x, int offset_y, MATADT data) {
+/*
+ *	write_matrix()
+ *
+ *	Write data to a matrix.
+ *
+ *	@matrix: the matrix
+ *	@offset_x: the offset column position
+ *	@offset_y: the offset row position
+ *	@data: the data
+ */
+void write_matrix(fact **matrix, int offset_x, int offset_y, fact data) {
 	matrix[offset_y][offset_x] = data;
 }
 
-MATADT read_matrix(MATADT **matrix, int offset_x, int offset_y) {
+/*
+ *	read_matrix()
+ *
+ *	Read data from a matrix.
+ *
+ *	@matrix: the matrix
+ *	@offset_x: the offset column position
+ *	@offset_y: the offset row position
+ */
+fact read_matrix(fact **matrix, int offset_x, int offset_y) {
 	return(matrix[offset_y][offset_x]);
 }
 

@@ -1,7 +1,9 @@
+# for Microsoft Windows only
 ARCHITECTURE=i686
 CC=$(ARCHITECTURE)-pc-mingw32-gcc
-CC_CONF_FCE=$(CC_CONF) -DCROSS_COMPILER_WIN32 -lbce
+CC_CONF+=-DCROSS_COMPILER_WIN32 -D_WIN32_
+OBJ+=version.res
+OUT=bce.exe
 RES=$(ARCHITECTURE)-pc-mingw32-windres
-OUTPUT_FCE=fce.exe
-OBJ_FCE+=version.res
+INSTALLER=install-invalid.sh
 

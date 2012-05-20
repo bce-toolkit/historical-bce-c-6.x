@@ -28,43 +28,58 @@
 #include "../include/syntax.h"
 #include "../include/polynomial.h"
 
-exp *balance_chemical_equation(char *nptr, int *count) {
-	int idx, max_x, max_y;
-	fact **equ_matrix;
-	exp *equ_ret, *ep;
-	equ_matrix = get_balance_matrix(nptr, &max_x, &max_y);
-	if (!equ_matrix)
+/*
+ *	balance_chemical_equation()
+ *
+ *	Balance a chemical equation.
+ *
+ *	@nptr: the formula of the chemical equation
+ *	@count: the count of balance results will be put in this variable
+ */
+exp* balance_chemical_equation(char *nptr, int *count) {
+	int idx, mx, my;
+	fact **mtx;
+	exp *ret, *ep;
+	mtx = get_balance_matrix(nptr, &mx, &my);
+	if (!mtx)
 		return(NULL);
 
-	equ_ret = solve_equations(equ_matrix, max_x, max_y, 0, 0, 0);
-	if (!equ_ret) {
-		free_matrix(equ_matrix, max_y);
+	ret = solve_equations(mtx, mx, my, 0, 0, 0);
+	if (!ret) {
+		free_matrix(mtx, my);
 		return(NULL);
 	}
 
-	if (check_equation_result(equ_matrix, equ_ret, max_x, max_y) != EXPMODULE_TRUE) {
-		free_matrix(equ_matrix, max_y);
-		free_expression_stack(equ_ret, max_x - 1);
+	if (check_equation_result(mtx, ret, mx, my) != EXPMODULE_TRUE) {
+		free_matrix(mtx, my);
+		free_expression_stack(ret, mx - 1);
 		return(NULL);
 	}
 
-	free_matrix(equ_matrix, max_y);
+	free_matrix(mtx, my);
 
-	finishing_expression_stack(equ_ret, max_x - 1);
-	expression_to_number(equ_ret, max_x - 1, EXPMODULE_TRUE);
+	finishing_expression_stack(ret, mx - 1);
+	expression_to_number(ret, mx - 1, EXPMODULE_TRUE);
 
-	for (idx = 0, ep = equ_ret; idx < max_x - 1; idx++, ep++)
+	for (idx = 0, ep = ret; idx < mx - 1; idx++, ep++)
 		if (ep->count == 0 && fraction_compare(ep->cst, F_ZERO) == 0) {
-			free_expression_stack(equ_ret, max_x - 1);
+			free_expression_stack(ret, mx - 1);
 			return(NULL);
 		}
 
-	*count = max_x - 1;
+	*count = mx - 1;
 
-	return(equ_ret);
+	return(ret);
 }
 
-char *automatic_balance_ce(char *nptr) {
+/*
+ *	automatic_balance_ce()
+ *
+ *	Balance a chemical equation and return the result automatically.
+ *
+ *	@nptr: the formula of the chemical equation
+ */
+char* automatic_balance_ce(char *nptr) {
 	int count;
 	char *p;
 	exp *ret;

@@ -20,5 +20,5 @@
  */
 
 /*  Allocate this size(as byte) for each memory page  */
-#define DEFAULT_PAGE_SIZE 256
+#define DEFAULT_PAGE_SIZE (2^8)
 

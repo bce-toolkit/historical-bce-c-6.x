@@ -25,7 +25,12 @@
 #include <stdlib.h>
 #include "../include/string_ext.h"
 
-char *strpush(const char *begin, const char *end) {
+/*
+ *	strpush()
+ *
+ *	Split the string between [@begin, @end].
+ */
+char* strpush(const char *begin, const char *end) {
 	char *ret;
 
 	ret = (char*) malloc((end - begin + 2)*sizeof(char));
@@ -38,15 +43,30 @@ char *strpush(const char *begin, const char *end) {
 	return(ret);
 }
 
+/*
+ *	pspush()
+ *
+ *	Print the string between [@begin, @end] on tty.
+ */
 void pspush(const char *begin, const char *end) {
 	for (; begin <= end; begin++)
 		putchar(*begin);
 }
 
+/*
+ *	strpcomp()
+ *
+ *	Compare a string with the string between [@begin, @end].
+ */
 int strpcomp(const char *begin, const char *end, const char *data) {
 	return(strpqcomp(begin, end, data, data + strlen(data) - 1));
 }
 
+/*
+ *	strpqcomp()
+ *
+ *	Compare the string [@begin1, @end1] with the string between [@begin2, @end2].
+ */
 int strpqcomp(const char *begin1, const char *end1, const char *begin2, const char *end2) {
 	for (; *begin1 == *begin2; begin1++, begin2++)
 		if (begin1 == end1 || begin2 == end2) {
@@ -60,6 +80,11 @@ int strpqcomp(const char *begin1, const char *end1, const char *begin2, const ch
 	return(STRLIB_FALSE);
 }
 
+/*
+ *	strpisnum()
+ *
+ *	Determine whether the string between [@begin, @end] is a readable number.
+ */
 int strpisnum(const char *begin, const char *end) {
 	for (; begin <= end; begin++)
 		if (isdigit((int)(*begin)))
@@ -70,6 +95,11 @@ int strpisnum(const char *begin, const char *end) {
 	return(STRLIB_TRUE);
 }
 
+/*
+ *	strptoi()
+ *
+ *	Convert the string between [@begin, @end] to an integer.
+ */
 int strptoi(char *begin, char *end, char **endptr) {
 	int ret = 0;
 

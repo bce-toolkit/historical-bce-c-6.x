@@ -32,20 +32,42 @@
 static char *unknown_table = "abcdefghijklmnopqrstuvwxyz";
 #define unknown_table_length 26
 
+/*
+ *	expression_create()
+ *
+ *	Create a polynomial with only a constant and no unknowns.
+ *
+ *	@numerator: the numerator of the constant
+ *	@denominator: the denominator of the constant
+ */
 exp expression_create(int numerator, int denominator) {
-	/*  Generate a new expression with no unknown  */
 	exp ret;
+	/*  Generate a new expression with no unknown  */
 	ret.count = 0;
 	ret.stack = empty_block_memory(DEFAULT_PAGE_SIZE);
 	ret.cst = fraction_create(numerator, denominator);
 	return(ret);
 }
 
+/*
+ *	fraction_to_expression()
+ *
+ *	Convert a fraction to a polynomial.
+ *
+ *	@src: the fraction
+ */
 exp fraction_to_expression(fact src) {
 	/*  Call expression_create function to create a new expression  */
 	return(expression_create(src.denominator, src.denominator));
 }
 
+/*
+ *	free_expression()
+ *
+ *	Free the storage pool of a polynomial.
+ *
+ *	@src: the fraction
+ */
 void free_expression(exp *ptr) {
 	/*  Free the stack  */
 	free_block_memory(&(ptr->stack));
@@ -53,6 +75,13 @@ void free_expression(exp *ptr) {
 	ptr->count = 0;
 }
 
+/*
+ *	free_expression_stack()
+ *
+ *	Free the dynamic memory used by a polynomial.
+ *
+ *	@src: the fraction
+ */
 void free_expression_stack(exp *src, int count) {
 	exp *ptr;
 	/*  Free each node  */
@@ -62,10 +91,28 @@ void free_expression_stack(exp *src, int count) {
 	free(src);
 }
 
+/*
+ *	query_expression_node()
+ *
+ *	Queries the specified item and stored in the pointer.
+ *
+ *	@stack: the unknown list
+ *	@count: the counter
+ *	@flag: specified item to be queried
+ */
 expnode* query_expression_node(bmem stack, int count, int flag) {
 	return(query_expression_node_ex((expnode*)stack.ptr, ((expnode*)stack.ptr) + count - 1, flag));
 }
 
+/*
+ *	query_expression_node_ex()
+ *
+ *	Queries the specified item and stored in the pointer.
+ *
+ *	@begin: the pointer points to the head of the unknown list
+ *	@end: the pointer points to the end of the unknown list
+ *	@flag: specified item to be queried
+ */
 expnode* query_expression_node_ex(expnode *begin, expnode *end, int flag) {
 	expnode *ptr;
 	/*  Check input values  */
@@ -91,11 +138,20 @@ expnode* query_expression_node_ex(expnode *begin, expnode *end, int flag) {
 	}
 }
 
+/*
+ *	get_insert_position()
+ *
+ *	Get the position where the new node should be located in.
+ *
+ *	@p: the pointer points to the head of the unknown list
+ *	@count: the counter
+ *	@flag: specified item to be added into the list
+ */
 expnode* get_insert_position(expnode *p, int count, int flag) {
 	expnode *ptr;
 	if (!p)
 		return(p);
-	/*  Get the position the new node should be located in (the node to be inserted mustn't be existed in the table)  */
+	/*  Get the position where the new node should be located in (the node to be inserted mustn't be existed in the table)  */
 	if (flag < p->flag)
 		return(p);
 	for (ptr = p; ptr < p + count - 1; ptr++)
@@ -106,6 +162,15 @@ expnode* get_insert_position(expnode *p, int count, int flag) {
 	return(p + count);
 }
 
+/*
+ *	push_expression_node()
+ *
+ *	Add a new node to the unknown list.
+ *
+ *	@target: the pointer points to the polynomial
+ *	@nd: the new node
+ *	@op: do this operation after deciding the position where it will be located in.
+ */
 int push_expression_node(exp *target, expnode nd, factop op) {
 	expnode *ptr, *move;
 	int offset;
@@ -131,6 +196,15 @@ int push_expression_node(exp *target, expnode nd, factop op) {
 	return(EXPMODULE_SUCCESS);
 }
 
+/*
+ *	push_expression_node_ex()
+ *
+ *	Add a new node to the unknown list.
+ *
+ *	@target: the pointer points to the polynomial
+ *	@{flag, pfx}: the new node
+ *	@op: do this operation after deciding the position where it will be located in.
+ */
 int push_expression_node_ex(exp *target, int flag, fact pfx, factop op) {
 	expnode nd;
 	/*  Generate a new node  */
@@ -139,10 +213,28 @@ int push_expression_node_ex(exp *target, int flag, fact pfx, factop op) {
 	return(push_expression_node(target, nd, op));
 }
 
+/*
+ *	push_expression_constant()
+ *
+ *	Operate the constant.
+ *
+ *	@target: the pointer points to the polynomial
+ *	@src: the fraction
+ *	@op: do this operation
+ */
 void push_expression_constant(exp *target, fact src, factop op) {
 	target->cst = op(target->cst, src);
 }
 
+/*
+ *	expression_vf_basic()
+ *
+ *	Operate each node of the polynomial.
+ *
+ *	@target: the pointer points to the polynomial
+ *	@src: the fraction
+ *	@op: do this operation
+ */
 void expression_vf_basic(exp *target, fact src, factop op) {
 	expnode *ptr;
 	push_expression_constant(target, src, op);
@@ -150,22 +242,65 @@ void expression_vf_basic(exp *target, fact src, factop op) {
 		ptr->pfx = op(ptr->pfx, src);
 }
 
+/*
+ *	expression_plus()
+ *
+ *	Do plus between a polynomial and a fraction.
+ *
+ *	@target: the pointer points to the polynomial
+ *	@src: the fraction
+ *	@op: do this operation
+ */
 void expression_plus(exp *target, fact src) {
 	push_expression_constant(target, src, fraction_plus);
 }
 
+/*
+ *	expression_minus()
+ *
+ *	Do subtraction between a polynomial and a fraction.
+ *
+ *	@target: the pointer points to the polynomial
+ *	@src: the fraction
+ *	@op: do this operation
+ */
 void expression_minus(exp *target, fact src) {
 	push_expression_constant(target, src, fraction_minus);
 }
 
+/*
+ *	expression_multiplination()
+ *
+ *	Do multiplination between a polynomial and a fraction.
+ *
+ *	@target: the pointer points to the polynomial
+ *	@src: the fraction
+ *	@op: do this operation
+ */
 void expression_multiplination(exp *target, fact src) {
 	expression_vf_basic(target, src, fraction_multiplination);
 }
 
+/*
+ *	expression_division()
+ *
+ *	Do division between a polynomial and a fraction.
+ *
+ *	@target: the pointer points to the polynomial
+ *	@src: the fraction
+ *	@op: do this operation
+ */
 void expression_division(exp *target, fact src) {
 	expression_vf_basic(target, src, fraction_division);
 }
 
+/*
+ *	simplify_expression_node()
+ *
+ *	Remove unknown(s) with the prefix 0 before from the polynomial.
+ *
+ *	@target: the pointer points to the polynomial
+ */
 int simplify_expression_node(exp *target) {
 	int cnt = 0;
 	bmem newstack;
@@ -195,9 +330,13 @@ int simplify_expression_node(exp *target) {
 	return(EXPMODULE_SUCCESS);
 }
 
+/*
+ *	expression_double_operation()
+ *
+ *	Do operation: @exp1 = @exp1 @op1 (@exp2 @op2 @ft)
+ */
 int expression_double_operation(exp *exp1, factop op1, exp exp2, factop op2, fact ft) {
 	expnode *ptr;
-	/*  Do operation: exp1 = exp1 op1 (exp2 op2 ft)  */
 	/*  op1 = {fraction_plus, fraction_minus), op2 = {fraction_multiplination, fraction_division}  */
 	push_expression_constant(exp1, op2(exp2.cst, ft), op1);
 	for (ptr = (expnode*)exp2.stack.ptr; ptr < (expnode*)exp2.stack.ptr + exp2.count; ptr++)
@@ -206,6 +345,14 @@ int expression_double_operation(exp *exp1, factop op1, exp exp2, factop op2, fac
 	return(EXPMODULE_SUCCESS);
 }
 
+/*
+ *	finishing_expression_stack()
+ *
+ *	Finishing the set of polynomials and make their prefix number consecutively
+ *
+ *	@target: the pointer points to the polynomial set
+ *	@len: the item count of the polynomial set
+ */
 void finishing_expression_stack(exp *src, int len) {
 	expnode **fsort, **sp;
 	exp *ptr;
@@ -219,7 +366,7 @@ void finishing_expression_stack(exp *src, int len) {
 	for (ptr = src, sp = fsort; ptr < src + len; ptr++, sp++)
 		*sp = (expnode*) ptr->stack.ptr;
 
-	/*  Sort them and make their ID continous  */
+	/*  Sort them and make their ID consecutively  */
 	do {
 		for (mf = EXPMODULE_FALSE, ptr = src, sp = fsort; ptr < src + len; ptr++, sp++)
 			if (*sp < (expnode*)ptr->stack.ptr + ptr->count) {
@@ -243,6 +390,14 @@ void finishing_expression_stack(exp *src, int len) {
 	free(fsort);
 }
 
+/*
+ *	expression_memcpy()
+ *
+ *	Copy a polynomial from @src to @target
+ *
+ *	@...
+ *	@destroy_after_copy: destroy 'src' after copying it
+ */
 int expression_memcpy(exp *target, exp src, int destroy_after_copy) {
 	free_expression(target);
 	*target = src;
@@ -256,6 +411,15 @@ int expression_memcpy(exp *target, exp src, int destroy_after_copy) {
 	return(EXPMODULE_SUCCESS);
 }
 
+/*
+ *	expression_to_number()
+ *
+ *	Make various elements of a polynomial into integers.
+ *
+ *	@src: the polynomial set
+ *	@len: the item count of the polynomial set
+ *	@inc_args: does it include the prefix numbers?
+ */
 void expression_to_number(exp *src, int len, int inc_args) {
 	exp *ptr;
 	expnode *subptr;
@@ -272,6 +436,13 @@ void expression_to_number(exp *src, int len, int inc_args) {
 		expression_multiplination(ptr, mt);
 }
 
+/*
+ *	get_unknown_symbol()
+ *
+ *	Get the symbol by using its id.
+ *
+ *	@id: the unknown's id
+ */
 char *get_unknown_symbol(int id) {
 	int temp = id, cnt = 0;
 	char *ret, *ptr;
@@ -293,6 +464,13 @@ char *get_unknown_symbol(int id) {
 	return(ret);
 }
 
+/*
+ *	sprint_expression()
+ *
+ *	To convert a polynomial into a string.
+ *
+ *	@sz: the polynomial
+ */
 char* sprint_expression(exp sz) {
 	char *new, *temp, *symbol;
 	expnode *szptr;

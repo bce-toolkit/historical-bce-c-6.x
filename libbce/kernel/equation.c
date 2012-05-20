@@ -28,7 +28,18 @@
 #include "../include/polynomial.h"
 #include "../include/equation.h"
 
-exp *solve_equations(fact **matrix, int mx, int my, int unknowns, int base_offset_x, int base_offset_y) {
+/*
+ *	solve_equations()
+ *
+ *	Solve linear equations or indeterminate equations.
+ *
+ *	@matrix: the matrix
+ *	@mx: the number of columns of the matrix
+ *	@my: the number of rows of the matrix
+ *	@unknowns: the next unknown's id
+ *	@base_offset_x, @base_offset_y: the offset of the sub matrix to be solved
+ */
+exp* solve_equations(fact **matrix, int mx, int my, int unknowns, int base_offset_x, int base_offset_y) {
 	int idx;
 	fact *temp, *ptr_equ, **ptr_matrix, *prepare, *pc;
 	exp *ret, *rpptr, *solve_equ, *retptr, step;
@@ -106,7 +117,7 @@ exp *solve_equations(fact **matrix, int mx, int my, int unknowns, int base_offse
 
 		*ret = step;
 	} else {
-		/*  One more unknown, eliminating  */
+		/*  Have more than one unknown, eliminating  */
 		/*  Allocate enough memory areas to contain new equations  */
 		for (ptr_matrix = matrix; ptr_matrix < matrix + my; ptr_matrix++)
 			if (fraction_compare(read_matrix(ptr_matrix, base_offset_x, 0), F_ZERO) != 0) {
@@ -151,6 +162,16 @@ exp *solve_equations(fact **matrix, int mx, int my, int unknowns, int base_offse
 	return(ret);
 }
 
+/*
+ *	check_equation_result()
+ *
+ *	Check the result returned by solve_equations().
+ *
+ *	@matrix: the matrix
+ *	@ret: the results
+ *	@mx: the number of columns of the matrix
+ *	@my: the number of rows of the matrix
+ */
 int check_equation_result(fact **matrix, exp *ret, int mx, int my) {
 	fact *ptr_equ, **ptr_matrix;
 	exp *rpptr, step;
@@ -158,7 +179,7 @@ int check_equation_result(fact **matrix, exp *ret, int mx, int my) {
 	for (ptr_matrix = matrix; ptr_matrix < matrix + my; ptr_matrix++) {
 		/*  Calculate the result of the equation  */
 		step = expression_create(0, 1);
-		for (ptr_equ = (*ptr_matrix), rpptr = ret; ptr_equ < (*ptr_matrix) + mx - 1; ptr_equ++, rpptr++)
+		for (ptr_equ = *ptr_matrix, rpptr = ret; ptr_equ < (*ptr_matrix) + mx - 1; ptr_equ++, rpptr++)
 			if (expression_double_operation(&step, fraction_plus, *rpptr, fraction_multiplination, *ptr_equ) != EXPMODULE_SUCCESS) {
 				free_expression(&step);
 				return(EXPMODULE_FALSE);

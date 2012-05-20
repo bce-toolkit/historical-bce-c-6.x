@@ -1,5 +1,5 @@
 /*
- *	FMA Configurations
+ *	Stream I/O Controller
  *
  *	Copyright (C) 2011-2012 XiaoJSoft Studio. All Rights Reserved.
  *	Copyright (C) Ji WenCong <whs_jwc@163.com>
@@ -19,6 +19,12 @@
  *
  */
 
-/*  Allocate this size(as byte) for each memory page  */
-#define DEFAULT_PAGE_SIZE 256
+#ifndef LIO_DEFINED
+	#define LIO_SUCCESS 0
+	#define LIO_ERROR 1
+	#define LIO_DEFINED
+#endif
+
+char *linein(FILE *fp, char *lcc);
+int print_textfile(char *path, FILE *t);
 

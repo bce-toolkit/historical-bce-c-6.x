@@ -23,6 +23,13 @@
 #include <stdlib.h>
 #include "../include/blockmem.h"
 
+/*
+ *	empty_block_memory()
+ *
+ *	Create a empty memory page
+ *
+ *	@size_per_page: the size of each page
+ */
 bmem empty_block_memory(size_t size_per_page) {
 	bmem new;
 	new.pnum = 0;
@@ -31,6 +38,15 @@ bmem empty_block_memory(size_t size_per_page) {
 	return(new);
 }
 
+/*
+ *	allocate_block_memory()
+ *
+ *	Allocate dynamic memory
+ *
+ *	@p: the pointer points to the data struct of the container
+ *	@size: numbers of bytes to allocate
+ *	@size_per_page: the size of each page
+ */
 int allocate_block_memory(bmem *p, size_t size, size_t size_per_page) {
 	/*  Calculate the number of pages what we need  */
 	p->psize = size_per_page;
@@ -42,6 +58,14 @@ int allocate_block_memory(bmem *p, size_t size, size_t size_per_page) {
 	return(BLOCKMEM_SUCCESS);
 }
 
+/*
+ *	reallocate_block_memory()
+ *
+ *	Changes the size of the memory block pointed to
+ *
+ *	@p: the pointer points to the data struct of the container
+ *	@size: numbers of bytes the new block will be
+ */
 int reallocate_block_memory(bmem *p, size_t size) {
 	bmem new;
 	/*  The block which is uninitialized can't be reallocated  */
@@ -63,6 +87,13 @@ int reallocate_block_memory(bmem *p, size_t size) {
 	return(BLOCKMEM_SUCCESS);
 }
 
+/*
+ *	free_block_memory()
+ *
+ *	Free the memory space pointed to by 'p'.
+ *
+ *	@p: the pointer points to the data struct of the container
+ */
 void free_block_memory(bmem *p) {
 	if (p->ptr);
 		free(p->ptr);

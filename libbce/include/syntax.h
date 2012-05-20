@@ -22,6 +22,6 @@
 #include "fraction.h"
 #include "polynomial.h"
 
-char *redirect_print_result(char *nptr, exp *ce_num, int count);
-fact **get_balance_matrix(char *nptr, int *high_x, int *high_y);
+char* redirect_print_result(char *nptr, exp *ce_num, int count);
+fact** get_balance_matrix(char *nptr, int *high_x, int *high_y);
 

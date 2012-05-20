@@ -1,8 +1,8 @@
 #!/bin/sh
 MAJOR=6
-MINOR=0
-REVISION1=32
-REVISION2=3
+MINOR=2
+REVISION1=26
+REVISION2=1
 
 rm -Rf resources>/dev/null
 mkdir resources>/dev/null
@@ -17,7 +17,7 @@ FILETYPE 0x2
 	{
 		BLOCK \"040904B0\"
 		{
-			VALUE \"CompanyName\", \"XiaoJSoft Studio\"
+			VALUE \"CompanyName\", \"XiaoJSoft Studio.\"
 			VALUE \"FileDescription\", \"BCE Kernel DLL\"
 			VALUE \"FileVersion\", \"""$MAJOR"".""$MINOR"".""$REVISION1"".""$REVISION2"" (kernel-only)\"
 			VALUE \"InternalName\", \"libbce.dll\"

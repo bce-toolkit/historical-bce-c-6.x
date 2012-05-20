@@ -1,5 +1,5 @@
 /*
- *	The Euclidean Algorithm Module
+ *	The Euclidean Algorithm Module (GCD)
  *
  *	Copyright (C) 2011-2012 XiaoJSoft Studio. All Rights Reserved.
  *	Copyright (C) Ji WenCong <whs_jwc@163.com>

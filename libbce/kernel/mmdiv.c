@@ -1,5 +1,5 @@
 /*
- *	The Euclidean Algorithm Module
+ *	The Euclidean Algorithm Module (GCD)
  *
  *	Copyright (C) 2011-2012 XiaoJSoft Studio. All Rights Reserved.
  *	Copyright (C) Ji WenCong <whs_jwc@163.com>
@@ -21,6 +21,13 @@
 
 #include "../include/mmdiv.h"
 
+/*
+ *	mdiv()
+ *
+ *	Get the greatest common divisor of two numbers.
+ *
+ *	@x, @y: the two numbers.
+ */
 int mdiv(int x, int y) {
 	int temp;
 	while (y) {
@@ -31,6 +38,13 @@ int mdiv(int x, int y) {
 	return(x);
 }
 
+/*
+ *	mmul()
+ *
+ *	Get the least common multiple of two numbers.
+ *
+ *	@x, @y: the two numbers.
+ */
 int mmul(int x, int y) {
 	return(x * y / mdiv(x, y));
 }

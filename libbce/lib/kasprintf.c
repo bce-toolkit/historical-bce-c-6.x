@@ -24,6 +24,11 @@
 #include <stdarg.h>
 #include "../include/kasprintf.h"
 
+/*
+ *	kasprintf()
+ *
+ *	Print to allocated string.
+ */
 int kasprintf(char **buf,  const char *fmt, ...) {
 	va_list ap;
 	unsigned int len;
@@ -33,12 +38,12 @@ int kasprintf(char **buf,  const char *fmt, ...) {
 	len = vsnprintf(NULL, 0, fmt, ap);
 	va_end(ap);
 
-	p = (char*) malloc(len+1);
+	p = (char*) malloc(len + 1);
 	if (!p)
 		return(-1);
 
 	va_start(ap, fmt);
-	vsnprintf(p, len+1, fmt, ap);
+	vsnprintf(p, len + 1, fmt, ap);
 	va_end(ap);
 
 	*buf = p;

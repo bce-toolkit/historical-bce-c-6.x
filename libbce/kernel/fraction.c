@@ -24,6 +24,14 @@
 #include "../include/mmdiv.h"
 #include "../include/fraction.h"
 
+/*
+ *	fraction_create()
+ *
+ *	Create a fraction
+ *
+ *	@numer: the numerator part of the fraction
+ *	@denomin: the denominator part of the fraction
+ */
 fact fraction_create(int numer, int denomin) {
 	fact new_fact;
 
@@ -35,6 +43,13 @@ fact fraction_create(int numer, int denomin) {
 	return(new_fact);
 }
 
+/*
+ *	fraction_simplify()
+ *
+ *	Simplify a fraction
+ *
+ *	@src: the fraction
+ */
 fact fraction_simplify(fact src) {
 	int ld_mdiv = mdiv(src.numerator, src.denominator);
 	fact ret;
@@ -47,6 +62,11 @@ fact fraction_simplify(fact src) {
 	return(ret);
 }
 
+/*
+ *	fraction_plus()
+ *
+ *	Do plus between @num1 and @num2
+ */
 fact fraction_plus(fact num1, fact num2) {
 	fact ret;
 
@@ -59,6 +79,11 @@ fact fraction_plus(fact num1, fact num2) {
 	return(ret);
 }
 
+/*
+ *	fraction_plus()
+ *
+ *	Do subtract between @num1 and @num2
+ */
 fact fraction_minus(fact num1, fact num2) {
 	fact ret;
 
@@ -71,6 +96,11 @@ fact fraction_minus(fact num1, fact num2) {
 	return(ret);
 }
 
+/*
+ *	fraction_plus()
+ *
+ *	Do multiplination between @num1 and @num2
+ */
 fact fraction_multiplination(fact num1, fact num2) {
 	fact ret;
 
@@ -83,6 +113,11 @@ fact fraction_multiplination(fact num1, fact num2) {
 	return(ret);
 }
 
+/*
+ *	fraction_plus()
+ *
+ *	Do division between @num1 and @num2
+ */
 fact fraction_division(fact num1, fact num2) {
 	fact ret;
 
@@ -95,6 +130,14 @@ fact fraction_division(fact num1, fact num2) {
 	return(ret);
 }
 
+/*
+ *	fraction_plus()
+ *
+ *	Compare the value of two fractions(@x, @y)
+ *	fraction_compare(x,y)<0 => x>y
+ *	                (x,y)=0 => x=y
+ *                     (x,y)>0 => x<y
+ */
 int fraction_compare(fact x, fact y) {
 	int ln_mmul;
 
