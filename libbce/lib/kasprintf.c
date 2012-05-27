@@ -38,7 +38,7 @@ int kasprintf(char **buf,  const char *fmt, ...) {
 	len = vsnprintf(NULL, 0, fmt, ap);
 	va_end(ap);
 
-	p = (char*) malloc(len + 1);
+	p = (char*) malloc((len + 1) * sizeof(char));
 	if (!p)
 		return(-1);
 

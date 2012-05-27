@@ -43,7 +43,7 @@
 #endif
 
 /*  Argument options  */
-static char *options = "m:hs";
+static char *options = "m:hsb:";
 
 /*
  *	main()
@@ -51,7 +51,7 @@ static char *options = "m:hs";
  *	Main processor of BCE
  */
 int main(int argc, char *argv[], char *envp[]) {
-	char *p,lcc, *r;
+	char *p = NULL,lcc, *r;
 	int mode = 2, silent = 0, sh = 0, opt, mrcc;
 	exp *mr, *mp;
 	/*  Deal with the arguments  */
@@ -72,6 +72,40 @@ int main(int argc, char *argv[], char *envp[]) {
 			case 's':
 				/*  Not to show the banner  */
 				silent = 1;
+				break;
+			case 'b':
+				if (mode == 1) {
+					mr = balance_chemical_equation(optarg, &mrcc);
+					if (!mr) {
+						printf(LANG_ERROR_CE1);
+						goto jump;
+					}
+					for (mp = mr; mp < mr + mrcc; mp++) {
+						r = sprint_expression(*mp);
+						if (!r) {
+							if (mp == mr + mrcc - 1)
+								printf(LANG_ERROR_CE1);
+							else
+								printf(LANG_ERROR_CE2);
+						} else {
+							if (mp == mr + mrcc - 1)
+								printf("%s\n", r);
+							else
+								printf("%s,", r);
+							free(r);
+						}
+					}
+					free_expression_stack(mr, mrcc);
+				} else {
+					r = automatic_balance_ce(optarg);
+					if (r) {
+						printf("%s\n", r);
+						free(r);
+					} else {
+						printf(LANG_ERROR_CE1);
+					}
+				}
+
 				break;
 			case ':':
 				return(BCENO_NOVALUE);
