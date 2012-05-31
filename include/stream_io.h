@@ -19,12 +19,13 @@
  *
  */
 
-#ifndef LIO_DEFINED
+#ifndef _STREAM_IO_H_
+	char *linein(FILE *fp, char *lcc);
+	int print_textfile(char *path, FILE *t);
+
 	#define LIO_SUCCESS 0
 	#define LIO_ERROR 1
-	#define LIO_DEFINED
-#endif
 
-char *linein(FILE *fp, char *lcc);
-int print_textfile(char *path, FILE *t);
+	#define _STREAM_IO_H_
+#endif
 

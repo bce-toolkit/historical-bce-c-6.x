@@ -19,6 +19,9 @@
  *
  */
 
-int mdiv(int x, int y);
-int mmul(int x, int y);
+#ifndef _MMDIV_H_
+	int mdiv(int x, int y);
+	int mmul(int x, int y);
+	#define _MMDIV_H_
+#endif
 

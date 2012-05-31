@@ -19,5 +19,8 @@
  *
  */
 
-int kasprintf(char **buf,  const char *fmt, ...);
+#ifndef _KASPRINTF_H_
+	int kasprintf(char **buf,  const char *fmt, ...);
+	#define _KASPRINTF_H_
+#endif
 

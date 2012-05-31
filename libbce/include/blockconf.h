@@ -19,6 +19,9 @@
  *
  */
 
-/*  Allocate this size(as byte) for each memory page  */
-#define DEFAULT_PAGE_SIZE (2^8)
+#ifndef _BLOCKCONF_H_
+	/*  Allocate this size(as byte) for each memory page  */
+	#define DEFAULT_PAGE_SIZE (2^8)
+	#define _BLOCKCONF_H_
+#endif
 

@@ -1,5 +1,5 @@
 /*
- *	Equation Solver
+ *	Intelligent Chemical Equation Formatter/Fixer (ifix)
  *
  *	Copyright (C) 2011-2012 XiaoJSoft Studio. All Rights Reserved.
  *	Copyright (C) Ji WenCong <whs_jwc@163.com>
@@ -19,13 +19,26 @@
  *
  */
 
-#ifndef _EQUATION_H_
-	#include "fraction.h"
+#ifndef _FIX_H_
 	#include "polynomial.h"
 
-	exp *solve_equations(fact **matrix, int mx, int my, int unknowns, int base_offset_x, int base_offset_y);
-	int check_equation_result(fact **matrix, exp *ret, int mx, int my);
+	struct fixdata_adt {
+		char *begin, *end;
+		int side;
+		exp num;
+	};
 
-	#define _EQUATION_H_
+	typedef struct fixdata_adt fix;
+
+	#define FIX_SUCCESS 0
+	#define FIX_FAILED 1
+
+	#define JMP_ONE "1"
+
+	int fix_compare(const void *p1, const void *p2);
+	fix* fix_syntax_ce(char *nptr, exp *s, int count, int *fc);
+	char* fix_redirect_sprint(fix *p, int fc, int exchangeable);
+
+	#define _FIX_H_
 #endif
 

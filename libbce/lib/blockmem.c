@@ -97,6 +97,7 @@ int reallocate_block_memory(bmem *p, size_t size) {
 void free_block_memory(bmem *p) {
 	if (p->ptr);
 		free(p->ptr);
+	p->ptr = NULL;
 	*p = empty_block_memory(p->psize);
 }
 

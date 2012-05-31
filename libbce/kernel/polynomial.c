@@ -412,6 +412,37 @@ int expression_memcpy(exp *target, exp src, int destroy_after_copy) {
 }
 
 /*
+ *	expression_bce_setx2one()
+ *
+ *	Set the value last unknown to 1 (This function is useless for application but bce).
+ *
+ *	@src: the pointer points to the polynomial set
+ *	@len: the item count of the polynomial set
+ */
+void expression_bce_setx2one(exp *src, int len) {
+	exp *ptr;
+	int maxid = EXPMODULE_BASEID;
+
+	for (ptr = src; ptr < src + len; ptr++)
+		if (ptr->count > 0)
+			if (((expnode*)(ptr->stack.ptr) + ptr->count - 1)->flag > maxid)
+				maxid = ((expnode*)(ptr->stack.ptr) + ptr->count - 1)->flag;
+
+	if (maxid > EXPMODULE_BASEID)
+		for (ptr = src; ptr < src + len; ptr++) {
+			if (ptr->count > 0) {
+				if (((expnode*)(ptr->stack.ptr) + ptr->count - 1)->flag == maxid) {
+					ptr->cst = fraction_plus(ptr->cst, ((expnode*)(ptr->stack.ptr) + ptr->count - 1)->pfx);
+					if (ptr->count == 1) {
+						free_block_memory(&(ptr->stack));
+					}
+					(ptr->count)--;
+				}
+			}
+		}
+}
+
+/*
  *	expression_to_number()
  *
  *	Make various elements of a polynomial into integers.
@@ -428,10 +459,10 @@ void expression_to_number(exp *src, int len, int inc_args) {
 	for (ptr = src; ptr < src + len; ptr++) {
 		ml = mmul(ptr->cst.denominator, ml);
 		if (inc_args == EXPMODULE_TRUE)
-			for (subptr = (expnode*)ptr->stack.ptr; subptr < (expnode*)ptr->stack.ptr + ptr->count; subptr++)
+			for (subptr = (expnode*)(ptr->stack.ptr); subptr < (expnode*)(ptr->stack.ptr) + ptr->count; subptr++)
 				ml = mmul(subptr->pfx.denominator, ml);
 	}
-	mt = fraction_create(ml < 0 ? -ml : ml, 1);
+	mt = fraction_create((ml < 0) ? -ml : ml, 1);
 	for (ptr = src; ptr < src + len; ptr++)
 		expression_multiplination(ptr, mt);
 }
@@ -475,40 +506,44 @@ char* sprint_expression(exp sz) {
 	char *new, *temp, *symbol;
 	expnode *szptr;
 	fact pfx;
+
 	/*  Build a new string  */
 	new = (char*) malloc(sizeof(char));
 	if (!new)
 		return(NULL);
 	*new = '\0';
-	for (szptr = (expnode*)sz.stack.ptr; szptr < (expnode*)sz.stack.ptr + sz.count; szptr++) {
-		pfx = szptr->pfx;
-		symbol = get_unknown_symbol(szptr->flag);
-		if (!symbol) {
-			free(new);
-			return(NULL);
-		}
-		temp = new;
-		if (pfx.numerator % pfx.denominator == 0) {
-			if (pfx.numerator / pfx.denominator == 1) {
-				kasprintf(&new, "%sX%s+", new, symbol);
-			} else {
-				if (pfx.numerator / pfx.denominator != 0 && pfx.numerator / pfx.denominator != -1) {
-					if (strlen(new) > 0 && pfx.numerator / pfx.denominator < 0)
-						if (*(new + strlen(new) - 1) == '+')
-							*(new + strlen(new) - 1) = '\0';
-					kasprintf(&new, "%s%dX%s+", new, pfx.numerator / pfx.denominator, symbol);
-				} else {
-					kasprintf(&new, "%s-X%s+", new, symbol);
-				}
+
+	if (sz.count) {
+		for (szptr = (expnode*)(sz.stack.ptr); szptr < (expnode*)(sz.stack.ptr) + sz.count; szptr++) {
+			pfx = szptr->pfx;
+			symbol = get_unknown_symbol(szptr->flag);
+			if (!symbol) {
+				free(new);
+				return(NULL);
 			}
-		} else {
-			kasprintf(&new, "%s(%d/%d)X%s+", new, pfx.numerator, pfx.denominator, symbol);
+			temp = new;
+			if (pfx.numerator % pfx.denominator == 0) {
+				if (pfx.numerator / pfx.denominator == 1) {
+					kasprintf(&new, "%sX%s+", new, symbol);
+				} else {
+					if (pfx.numerator / pfx.denominator != 0 && pfx.numerator / pfx.denominator != -1) {
+						if (strlen(new) > 0 && pfx.numerator / pfx.denominator < 0)
+							if (*(new + strlen(new) - 1) == '+')
+								*(new + strlen(new) - 1) = '\0';
+						kasprintf(&new, "%s%dX%s+", new, pfx.numerator / pfx.denominator, symbol);
+					} else {
+						kasprintf(&new, "%s-X%s+", new, symbol);
+					}
+				}
+			} else {
+				kasprintf(&new, "%s(%d/%d)X%s+", new, pfx.numerator, pfx.denominator, symbol);
+			}
+			free(symbol);
+			if (new != temp)
+				free(temp);
+			if (!new)
+				return(NULL);
 		}
-		free(symbol);
-		if (new != temp)
-			free(temp);
-		if (!new)
-			return(NULL);
 	}
 	/*  Print out the constant  */
 	pfx = sz.cst;

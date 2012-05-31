@@ -1,7 +1,5 @@
 Usage: bce [options]
   -h:      Print this usage
-  -m[1|2]: Change output mode (1 => Prefix Only)
-                              (2 => Full)
   -s:      Do not show the banner
   -b:[x]:  Balance chemical equation x
 

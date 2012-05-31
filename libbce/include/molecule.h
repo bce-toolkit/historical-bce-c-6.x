@@ -19,10 +19,10 @@
  *
  */
 
-#include "element.h"
-#include "blockmem.h"
+#ifndef _MOLECULE_H
+	#include "element.h"
+	#include "blockmem.h"
 
-#ifndef ERRNO_MOLECULE_DEFINED
 	#define ERRNO_MOLECULE_SUCCESS 0
 	#define ERRNO_MOLECULE_SYNTAX 1
 	#define ERRNO_MOLECULE_MEMORY 2
@@ -31,13 +31,15 @@
 	#define ELECTRIC_E_MINUS "e-"
 	#define ELECTRIC_E_NAME "e"
 
+	#define HYDRATE_DOT '.'
+
 	#define SPECIAL_SIGNATURE_SOLID "s"
 	#define SPECIAL_SIGNATURE_LIQUIT "l"
 	#define SPECIAL_SIGNATURE_GAS "g"
 
-	#define ERRNO_MOLECULE_DEFINED
-#endif
+	int solve_molecule(char *begin, char *end, bmem *eptr, int *ecount, int suffix);
+	int solve_molecule_hydrate(char *begin, char *end, bmem *eptr, int *ecount, int suffix);
 
-int solve_molecule(char *begin, char *end, bmem *eptr, int *ecount, int suffix);
-int solve_molecule_hydrate(char *begin, char *end, bmem *eptr, int *ecount, int suffix);
+	#define _MOLECULE_H
+#endif
 

@@ -2,7 +2,7 @@
 CC=cc
 # for Debug:
 # CC_CONF+=-ggdb3
-OUT=bcksh
+OUT=bcsh-single
 RES=./version-invalid.sh
 INSTALLER=install.sh
 

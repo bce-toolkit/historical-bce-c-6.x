@@ -1,3 +1,8 @@
+Tue May 31 23:57:10 2012 Ji WenCong <whs_jwc@163.com>
+	* Added ifix function
+	* Simplified the shell
+	* Simplified syntax.c
+
 Sun May 27 22:05:03 2012 Ji WenCong <whs_jwc@163.com>
 	* Added argument '-b[x]'
 

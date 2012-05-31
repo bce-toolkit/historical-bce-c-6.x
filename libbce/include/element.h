@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef E_DATA_DEFINED
+#ifndef _ELEMENT_H_
 	struct e_data
 	{
 		char *begin;
@@ -28,6 +28,6 @@
 	};
 
 	typedef struct e_data element;
-	#define E_DATA_DEFINED
+	#define _ELEMENT_H_
 #endif
 

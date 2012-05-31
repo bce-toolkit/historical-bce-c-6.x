@@ -19,9 +19,21 @@
  *
  */
 
-#include "fraction.h"
-#include "polynomial.h"
+#ifndef _SYNTAX_H
+	#include "fraction.h"
+	#include "polynomial.h"
 
-char* redirect_print_result(char *nptr, exp *ce_num, int count);
-fact** get_balance_matrix(char *nptr, int *high_x, int *high_y);
+	#define SYNTAX_EQUAL '='
+	#define SYNTAX_SPLITER "+=;"
+
+	#define connector_plus "+"
+	#define connector_equal "="
+	#define connector_opposite_equal "<=>"
+	#define connector_null ""
+	#define connector_nullrside "=0"
+
+	fact** get_balance_matrix(char *nptr, int *high_x, int *high_y);
+
+	#define _SYNTAX_H_
+#endif
 

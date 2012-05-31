@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef BLOCKMEM_DEFINEDED
+#ifndef _BLOCKMEM_H_
 	struct block_memory_node {
 		void *ptr;
 		long int pnum;
@@ -31,14 +31,14 @@
 	#define BLOCKMEM_ALLOCATE_ERROR 2
 	#define BLOCKMEM_UNINITIALIZED 4
 
-	#define BLOCKMEM_DEFINEDED
+	bmem empty_block_memory(size_t size_per_page);
+	int allocate_block_memory(bmem *p, size_t size, size_t size_per_page);
+	int reallocate_block_memory(bmem *p, size_t size);
+	void free_block_memory(bmem *p);
+
+	/*  Load FMA configurations  */
+	#include "blockconf.h"
+
+	#define _BLOCKMEM_H_
 #endif
-
-bmem empty_block_memory(size_t size_per_page);
-int allocate_block_memory(bmem *p, size_t size, size_t size_per_page);
-int reallocate_block_memory(bmem *p, size_t size);
-void free_block_memory(bmem *p);
-
-/*  Load FMA configurations  */
-#include "blockconf.h"
 

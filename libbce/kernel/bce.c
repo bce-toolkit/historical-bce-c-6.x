@@ -21,12 +21,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include "../include/bool.h"
 #include "../include/bce.h"
 #include "../include/fraction.h"
 #include "../include/equation.h"
 #include "../include/matrix_io.h"
 #include "../include/syntax.h"
 #include "../include/polynomial.h"
+#include "../include/fix.h"
 
 /*
  *	balance_chemical_equation()
@@ -37,9 +40,9 @@
  *	@count: the count of balance results will be put in this variable
  */
 exp* balance_chemical_equation(char *nptr, int *count) {
-	int idx, mx, my;
+	int mx, my;
 	fact **mtx;
-	exp *ret, *ep;
+	exp *ret;
 	mtx = get_balance_matrix(nptr, &mx, &my);
 	if (!mtx)
 		return(NULL);
@@ -59,13 +62,8 @@ exp* balance_chemical_equation(char *nptr, int *count) {
 	free_matrix(mtx, my);
 
 	finishing_expression_stack(ret, mx - 1);
+	expression_bce_setx2one(ret, mx - 1);
 	expression_to_number(ret, mx - 1, EXPMODULE_TRUE);
-
-	for (idx = 0, ep = ret; idx < mx - 1; idx++, ep++)
-		if (ep->count == 0 && fraction_compare(ep->cst, F_ZERO) == 0) {
-			free_expression_stack(ret, mx - 1);
-			return(NULL);
-		}
 
 	*count = mx - 1;
 
@@ -80,16 +78,26 @@ exp* balance_chemical_equation(char *nptr, int *count) {
  *	@nptr: the formula of the chemical equation
  */
 char* automatic_balance_ce(char *nptr) {
-	int count;
+	int c, fc;
 	char *p;
-	exp *ret;
+	exp *r;
+	fix *fx;
 
-	ret = balance_chemical_equation(nptr, &count);
-	if (!ret)
+	r = balance_chemical_equation(nptr, &c);
+	if (!r)
 		return(NULL);
 
-	p = redirect_print_result(nptr, ret, count);
-	free_expression_stack(ret, count);
+	fx = fix_syntax_ce(nptr, r, c, &fc);
+	if (!fx) {
+		free_expression_stack(r, c);
+		return(NULL);
+	}
+
+	p = fix_redirect_sprint(fx, fc, strchr(nptr, SYNTAX_EQUAL) ? false : true);
+	free_expression_stack(r, c);
+	free(fx);
+	if (!p)
+		return(NULL);
 
 	return(p);
 }

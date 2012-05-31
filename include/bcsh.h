@@ -19,8 +19,14 @@
  *
  */
 
-#define BCENO_SUCCESS 0
-#define BCENO_IVARG 1
-#define BCENO_NOVALUE 2
-#define BCENO_MEMFAIL 3
+#ifndef _BCSH_H_
+	void balance_ce(char *nptr);
+	int main(int argc, char *argv[], char *envp[]);
 
+	#define BCENO_SUCCESS 0
+	#define BCENO_IVARG 1
+	#define BCENO_NOVALUE 2
+	#define BCENO_MEMFAIL 3
+
+	#define _BCSH_H_
+#endif

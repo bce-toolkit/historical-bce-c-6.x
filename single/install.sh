@@ -6,7 +6,7 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 echo "Copying files..."
-cp bcksh /usr/bin/bce
+cp bcsh-single /usr/bin/bce
 
 echo "Install finished!"
 

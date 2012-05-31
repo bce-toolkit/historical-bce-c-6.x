@@ -24,10 +24,8 @@
 #include <unistd.h>
 #include <string.h>
 #include "../include/bcsh.h"
-#include "../libbce/include/bce.h"
-#include "../libbce/include/blockmem.h"
-#include "../libbce/include/polynomial.h"
 #include "../include/stream_io.h"
+#include "../include/lib/libbce.h"
 #include "../include/lang/bce_lang.h"
 
 #ifdef _SINGLE_
@@ -43,7 +41,23 @@
 #endif
 
 /*  Argument options  */
-static char *options = "m:hsb:";
+static char *options = "hsb:";
+
+/*
+ *	balance_ce()
+ *
+ *	Chemical equation balancer
+ */
+void balance_ce(char *nptr) {
+	char *r;
+	r = automatic_balance_ce(nptr);
+	if (r) {
+		printf("%s\n", r);
+		free(r);
+	} else {
+		printf(LANG_ERROR_CE1);
+	}
+}
 
 /*
  *	main()
@@ -51,20 +65,11 @@ static char *options = "m:hsb:";
  *	Main processor of BCE
  */
 int main(int argc, char *argv[], char *envp[]) {
-	char *p = NULL,lcc, *r;
-	int mode = 2, silent = 0, sh = 0, opt, mrcc;
-	exp *mr, *mp;
+	char *p = NULL,lcc;
+	int silent = 0, sh = 0, opt;
 	/*  Deal with the arguments  */
 	while ((opt = getopt(argc, argv, options)) != -1) {
 		switch (opt) {
-			case 'm':
-				/*  Change output mode  */
-				mode = atoi(optarg);
-				if (mode != 1 && mode != 2) {
-					printf(LANG_ERROR_MODE, optarg);
-					return(BCENO_IVARG);
-				}
-				break;
 			case 'h':
 				/*  Show help  */
 				sh = 1;
@@ -74,38 +79,7 @@ int main(int argc, char *argv[], char *envp[]) {
 				silent = 1;
 				break;
 			case 'b':
-				if (mode == 1) {
-					mr = balance_chemical_equation(optarg, &mrcc);
-					if (!mr) {
-						printf(LANG_ERROR_CE1);
-						goto jump;
-					}
-					for (mp = mr; mp < mr + mrcc; mp++) {
-						r = sprint_expression(*mp);
-						if (!r) {
-							if (mp == mr + mrcc - 1)
-								printf(LANG_ERROR_CE1);
-							else
-								printf(LANG_ERROR_CE2);
-						} else {
-							if (mp == mr + mrcc - 1)
-								printf("%s\n", r);
-							else
-								printf("%s,", r);
-							free(r);
-						}
-					}
-					free_expression_stack(mr, mrcc);
-				} else {
-					r = automatic_balance_ce(optarg);
-					if (r) {
-						printf("%s\n", r);
-						free(r);
-					} else {
-						printf(LANG_ERROR_CE1);
-					}
-				}
-
+				balance_ce(optarg);
 				break;
 			case ':':
 				return(BCENO_NOVALUE);
@@ -147,37 +121,7 @@ int main(int argc, char *argv[], char *envp[]) {
 		if (*p == '\0')
 			goto jump;
 		/*  Balance the chemical equation  */
-		if (mode == 1) {
-			mr = balance_chemical_equation(p, &mrcc);
-			if (!mr) {
-				printf(LANG_ERROR_CE1);
-				goto jump;
-			}
-			for (mp = mr; mp < mr + mrcc; mp++) {
-				r = sprint_expression(*mp);
-				if (!r) {
-					if (mp == mr + mrcc - 1)
-						printf(LANG_ERROR_CE1);
-					else
-						printf(LANG_ERROR_CE2);
-				} else {
-					if (mp == mr + mrcc - 1)
-						printf("%s\n", r);
-					else
-						printf("%s,", r);
-					free(r);
-				}
-			}
-			free_expression_stack(mr, mrcc);
-		} else {
-			r = automatic_balance_ce(p);
-			if (r) {
-				printf("%s\n", r);
-				free(r);
-			} else {
-				printf(LANG_ERROR_CE1);
-			}
-		}
+		balance_ce(p);
 jump:
 		free(p);
 	}

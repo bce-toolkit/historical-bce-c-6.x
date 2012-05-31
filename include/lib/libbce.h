@@ -1,5 +1,5 @@
 /*
- *	Equation Solver
+ *	BCE Library
  *
  *	Copyright (C) 2011-2012 XiaoJSoft Studio. All Rights Reserved.
  *	Copyright (C) Ji WenCong <whs_jwc@163.com>
@@ -19,13 +19,9 @@
  *
  */
 
-#ifndef _EQUATION_H_
-	#include "fraction.h"
-	#include "polynomial.h"
+#ifndef _LIBBCE_H_
+	char* automatic_balance_ce(char *nptr);
 
-	exp *solve_equations(fact **matrix, int mx, int my, int unknowns, int base_offset_x, int base_offset_y);
-	int check_equation_result(fact **matrix, exp *ret, int mx, int my);
-
-	#define _EQUATION_H_
+	#define _LIBBCE_H_
 #endif
 

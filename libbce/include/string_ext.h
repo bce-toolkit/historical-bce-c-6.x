@@ -19,17 +19,18 @@
  *
  */
 
-#ifndef STRLIB_VALUES_DEFINED
+#ifndef _STRING_EXT_H
 	#define STRLIB_TRUE 1
 	#define STRLIB_FALSE 0
 	#define strplen(begin, end) ((end)-(begin)+1)
-	#define STRLIB_VALUES_DEFINED
-#endif
 
-char* strpush(const char *begin, const char *end);
-void pspush(const char *begin, const char *end);
-int strpcomp(const char *begin, const char *end, const char *data);
-int strpisnum(const char *begin, const char *end);
-int strpqcomp(const char *begin1, const char *end1, const char *begin2, const char *end2);
-int strptoi(char *begin, char *end, char **endptr);
+	char* strpush(const char *begin, const char *end);
+	void pspush(const char *begin, const char *end);
+	int strpcomp(const char *begin, const char *end, const char *data);
+	int strpisnum(const char *begin, const char *end);
+	int strpqcomp(const char *begin1, const char *end1, const char *begin2, const char *end2);
+	int strptoi(char *begin, char *end, char **endptr);
+
+	#define _STRING_EXT_H
+#endif
 

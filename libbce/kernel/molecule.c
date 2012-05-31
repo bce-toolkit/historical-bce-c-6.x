@@ -21,8 +21,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
+#include "../include/bracket.h"
 #include "../include/blockmem.h"
 #include "../include/string_ext.h"
 #include "../include/element.h"
@@ -40,23 +41,18 @@
  */
 int solve_molecule_hydrate(char *begin, char *end, bmem *eptr, int *ecount, int suffix) {
 	char *dot = begin;
-	int ret, b_stack = 0;
+	int ret, stack = 0;
 
 	for (; begin <= end; begin++) {
 		/*  Ignore brackets in the formula  */
-		switch (*begin) {
-			case '(':
-				b_stack++;
-				break;
-			case ')':
-				b_stack--;
-				break;
-		}
-		if (b_stack != 0)
+		if (strchr(BRACKET_LEFT, *begin))
+			stack++;
+		if (strchr(BRACKET_RIGHT, *begin))
+			stack--;
+		if (stack)
 			continue;
-
 		/*  Split the molecular formula  */
-		if (*begin == '.' || begin == end) {
+		if (*begin == HYDRATE_DOT || begin == end) {
 			ret = solve_molecule(dot, begin == end ? begin : begin - 1, eptr, ecount, suffix);
 			if (ret != ERRNO_MOLECULE_SUCCESS)
 				return(ret);
@@ -65,7 +61,7 @@ int solve_molecule_hydrate(char *begin, char *end, bmem *eptr, int *ecount, int 
 	}
 
 	/*  Check the bracket stack  */
-	if (b_stack != 0)
+	if (stack != 0)
 		return(ERRNO_MOLECULE_SYNTAX);
 	else
 		return(ERRNO_MOLECULE_SUCCESS);
@@ -83,7 +79,7 @@ int solve_molecule_hydrate(char *begin, char *end, bmem *eptr, int *ecount, int 
  */
 int solve_molecule(char *begin, char *end, bmem *eptr, int *ecount, int suffix) {
 	char *ptr, *b_ptr, *temp, *start;
-	int b_stack, p_ret, b_prefix;
+	int stack, p_ret, b_prefix;
 	element *eap_ptr;
 	if (strplen(begin, end) <= 0)
 		return(ERRNO_MOLECULE_SUCCESS);
@@ -133,21 +129,15 @@ int solve_molecule(char *begin, char *end, bmem *eptr, int *ecount, int suffix) 
 	}
 
 	/*  Solve the bracket  */
-	for (b_stack = 0, ptr = start; ptr <= end; ptr++) {
-		if (*ptr != '(')
+	for (stack = 0, ptr = start; ptr <= end; ptr++) {
+		if (!strchr(BRACKET_LEFT, *ptr))
 			continue;
-
 		for (b_ptr = ptr; b_ptr <= end; b_ptr++) {
-			switch (*b_ptr) {
-				case '(':
-					b_stack++;
-					break;
-				case ')':
-					b_stack--;
-					break;
-			}
-
-			if (b_stack == 0) {
+			if (strchr(BRACKET_LEFT, *b_ptr))
+				stack++;
+			if (strchr(BRACKET_RIGHT, *b_ptr))
+				stack--;
+			if (!stack) {
 				/*  Solve the molecular on the left  */
 				p_ret = solve_molecule_hydrate(start, ptr - 1, eptr, ecount, suffix);
 				if (p_ret != ERRNO_MOLECULE_SUCCESS)
@@ -202,7 +192,6 @@ int solve_molecule(char *begin, char *end, bmem *eptr, int *ecount, int suffix) 
 					return(ERRNO_MOLECULE_MEMORY);
 
 				eap_ptr = (element*)eptr->ptr + *ecount - 1;
-
 				eap_ptr->begin = start;
 				eap_ptr->end = ptr - 1;
 				eap_ptr->count = b_prefix * suffix;

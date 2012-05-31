@@ -19,17 +19,18 @@
  *
  */
 
-/*  ADT type  */
-#include "fraction.h"
+#ifndef _MATRIX_IO_H_
+	/*  ADT type  */
+	#include "fraction.h"
 
-fact *get_matrix_header(fact **matrix, int my);
-void free_matrix(fact **matrix, int my);
-fact **allocate_matrix(int x, int y);
-void write_matrix(fact **matrix, int offset_x, int offset_y, fact data);
-fact read_matrix(fact **matrix, int offset_x, int offset_y);
+	fact *get_matrix_header(fact **matrix, int my);
+	void free_matrix(fact **matrix, int my);
+	fact **allocate_matrix(int x, int y);
+	void write_matrix(fact **matrix, int offset_x, int offset_y, fact data);
+	fact read_matrix(fact **matrix, int offset_x, int offset_y);
 
-#ifndef MATRIX_IO_DEFINEDED
 	#define matrix_offset(matrix, offset_x, offset_y) ((*((matrix) + (offset_y))) + (offset_x))
-	#define MATRIX_IO_DEFINEDED
+
+	#define _MATRIX_IO_H_
 #endif
 

@@ -42,9 +42,10 @@ install: $(OUT) install.sh install-invalid.sh
 
 test: $(OUT)
 	@echo "Run testcases..."
-	@./$(OUT) -m 2 -s < testcase/debug.in > testcase/debug.out
-	@./$(OUT) -m 2 -s < testcase/multi_result.in > testcase/multi_result.out
-	@./$(OUT) -m 2 -s < testcase/huge.in > testcase/huge.out
+	@./$(OUT) -s < testcase/debug.in > testcase/debug.out
+	@./$(OUT) -s < testcase/multi_result.in > testcase/multi_result.out
+	@./$(OUT) -s < testcase/huge.in > testcase/huge.out
+	@./$(OUT) -s < testcase/fix.in > testcase/fix.out
 	@echo "OK, please check the answer in testcase/*.out"
 
 config: config.conf

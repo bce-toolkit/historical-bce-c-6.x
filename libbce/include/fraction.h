@@ -19,7 +19,7 @@
  *
  */
 
-#ifndef DEFINED_FRACTION
+#ifndef _FRACTION_H_
 	struct fractionStruct
 	{
 		int denominator;
@@ -27,22 +27,21 @@
 	};
 	typedef struct fractionStruct fact;
 	typedef fact (*factop)(fact, fact);
-	#define DEFINED_FRACTION
-#endif
 
-fact fraction_create(int numer, int denomin);
-fact fraction_simplify(fact src);
-fact fraction_plus(fact num1, fact num2);
-fact fraction_minus(fact num1, fact num2);
-fact fraction_multiplination(fact num1, fact num2);
-fact fraction_division(fact num1, fact num2);
-int fraction_compare(fact x, fact y);
+	fact fraction_create(int numer, int denomin);
+	fact fraction_simplify(fact src);
+	fact fraction_plus(fact num1, fact num2);
+	fact fraction_minus(fact num1, fact num2);
+	fact fraction_multiplination(fact num1, fact num2);
+	fact fraction_division(fact num1, fact num2);
+	int fraction_compare(fact x, fact y);
 
-#ifndef DEFINED_FRACTION_ND
 	#define F_ZERO fraction_create(0, 1)
 	#define fraction_check_zero(x)	\
-		if (x.numerator == 0)		\
+		if (x.numerator == 0)	\
 			x.denominator = 1;
-	#define DEFINED_FRACTION_ND
+
+	#define _FRACTION_H_
 #endif
+
 
