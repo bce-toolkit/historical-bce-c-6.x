@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "../include/bool.h"
 #include "../include/bracket.h"
 #include "../include/blockmem.h"
 #include "../include/string_ext.h"
@@ -39,11 +40,11 @@
  *	@ecount: counter of the storage pool 'eptr'
  *	@suffix: digits after or before the molecular formula
  */
-int solve_molecule_hydrate(char *begin, char *end, bmem *eptr, int *ecount, int suffix) {
-	char *dot = begin;
-	int ret, stack = 0;
+bool solve_molecule_hydrate(char *begin, char *end, bmem *eptr, int *ecount, int suffix) {
+	char *dot;
+	int stack;
 
-	for (; begin <= end; begin++) {
+	for (stack = 0, dot = begin; begin <= end; begin++) {
 		/*  Ignore brackets in the formula  */
 		if (strchr(BRACKET_LEFT, *begin))
 			stack++;
@@ -53,18 +54,17 @@ int solve_molecule_hydrate(char *begin, char *end, bmem *eptr, int *ecount, int 
 			continue;
 		/*  Split the molecular formula  */
 		if (*begin == HYDRATE_DOT || begin == end) {
-			ret = solve_molecule(dot, begin == end ? begin : begin - 1, eptr, ecount, suffix);
-			if (ret != ERRNO_MOLECULE_SUCCESS)
-				return(ret);
+			if (!solve_molecule(dot, begin == end ? begin : begin - 1, eptr, ecount, suffix))
+				return(false);
 			dot = begin + 1;
 		}
 	}
 
 	/*  Check the bracket stack  */
-	if (stack != 0)
-		return(ERRNO_MOLECULE_SYNTAX);
+	if (stack)
+		return(false);
 	else
-		return(ERRNO_MOLECULE_SUCCESS);
+		return(true);
 }
 
 /*
@@ -77,92 +77,91 @@ int solve_molecule_hydrate(char *begin, char *end, bmem *eptr, int *ecount, int 
  *	@ecount: counter of the storage pool 'eptr'
  *	@suffix: digits after or before the molecular formula
  */
-int solve_molecule(char *begin, char *end, bmem *eptr, int *ecount, int suffix) {
+bool solve_molecule(char *begin, char *end, bmem *eptr, int *ecount, int suffix) {
 	char *ptr, *b_ptr, *temp, *start;
-	int stack, p_ret, b_prefix;
+	int stack, prefix;
 	element *eap_ptr;
+
 	if (strplen(begin, end) <= 0)
-		return(ERRNO_MOLECULE_SUCCESS);
+		return(true);
 
 	/*  Get the prefix number  */
-	b_prefix = strptoi(begin, end, &temp);
+	prefix = strptoi(begin, end, &temp);
 	if (!temp)
-		return(ERRNO_MOLECULE_MEMORY);
+		return(false);
 
-	if (b_prefix <= 0)
-		b_prefix = 1;
+	if (prefix <= 0)
+		prefix = 1;
 
 	/*  Fix the string  */
 	if (temp != begin) {
 		start = temp;
-		suffix *= b_prefix;
+		suffix *= prefix;
 	} else {
 		start = begin;
 	}
 
 	if (strplen(start, end) <= 0)
-		return(ERRNO_MOLECULE_SUCCESS);
+		return(true);
 
-	if (strpcomp(start, end, SPECIAL_SIGNATURE_SOLID) == STRLIB_TRUE || strpcomp(start, end, SPECIAL_SIGNATURE_LIQUIT) == STRLIB_TRUE || strpcomp(start, end, SPECIAL_SIGNATURE_GAS) == STRLIB_TRUE)
-		return(ERRNO_MOLECULE_SUCCESS);
+	if (strpcomp(start, end, SPECIAL_SIGNATURE_SOLID) || strpcomp(start, end, SPECIAL_SIGNATURE_LIQUIT) || strpcomp(start, end, SPECIAL_SIGNATURE_GAS))
+		return(true);
 
 	/*  Recognize whether the string is a electronic expression  */
-	if (strpcomp(start, end, ELECTRIC_E_PLUS) == STRLIB_TRUE || strpcomp(start, end, ELECTRIC_E_MINUS) == STRLIB_TRUE) {
+	if (strpcomp(start, end, ELECTRIC_E_PLUS) || strpcomp(start, end, ELECTRIC_E_MINUS)) {
 		for (eap_ptr = (element*)eptr->ptr; eap_ptr < (element*)eptr->ptr + *ecount; eap_ptr++)
-			if (strpcomp(eap_ptr->begin, eap_ptr->end, ELECTRIC_E_NAME) == STRLIB_TRUE) {
+			if (strpcomp(eap_ptr->begin, eap_ptr->end, ELECTRIC_E_NAME)) {
 				/*  Modify the value  */
-				eap_ptr->count += strpcomp(start, end, ELECTRIC_E_PLUS) == STRLIB_TRUE ? suffix : -suffix;
-				return(ERRNO_MOLECULE_SUCCESS);
+				eap_ptr->count += strpcomp(start, end, ELECTRIC_E_PLUS) ? suffix : -suffix;
+				return(true);
 			}
 
 		/*  Add the electronic descriptor in the element stack  */
-		if (reallocate_block_memory(eptr, (++(*ecount)) * sizeof(element)) != BLOCKMEM_SUCCESS)
-			return(ERRNO_MOLECULE_MEMORY);
+		if (!reallocate_block_memory(eptr, (++(*ecount)) * sizeof(element)))
+			return(false);
 
 		eap_ptr = (element*)eptr->ptr + (*ecount) - 1;
 
 		eap_ptr->begin = start;
 		eap_ptr->end = start;
-		eap_ptr->count = (strpcomp(start, end, ELECTRIC_E_PLUS) == STRLIB_TRUE) ? suffix : -suffix;
+		eap_ptr->count = strpcomp(start, end, ELECTRIC_E_PLUS) ? suffix : -suffix;
 
-		return(ERRNO_MOLECULE_SUCCESS);
+		return(true);
 	}
 
 	/*  Solve the bracket  */
 	for (stack = 0, ptr = start; ptr <= end; ptr++) {
 		if (!strchr(BRACKET_LEFT, *ptr))
 			continue;
+
 		for (b_ptr = ptr; b_ptr <= end; b_ptr++) {
 			if (strchr(BRACKET_LEFT, *b_ptr))
 				stack++;
+
 			if (strchr(BRACKET_RIGHT, *b_ptr))
 				stack--;
+
 			if (!stack) {
 				/*  Solve the molecular on the left  */
-				p_ret = solve_molecule_hydrate(start, ptr - 1, eptr, ecount, suffix);
-				if (p_ret != ERRNO_MOLECULE_SUCCESS)
-					return(p_ret);
+				if (!solve_molecule_hydrate(start, ptr - 1, eptr, ecount, suffix))
+					return(false);
 
 				/*  Get the suffix after the bracket  */
-				b_prefix = strptoi(b_ptr + 1, end, &temp);
-
+				prefix = strptoi(b_ptr + 1, end, &temp);
 				if (!temp)
-					return(ERRNO_MOLECULE_MEMORY);
-
-				if (b_prefix <= 0)
-					b_prefix = 1;
+					return(false);
+				if (prefix <= 0)
+					prefix = 1;
 
 				/*  Solve the molecular in the bracket  */
-				p_ret = solve_molecule_hydrate(ptr + 1, b_ptr - 1, eptr, ecount, suffix * b_prefix);
-				if (p_ret != ERRNO_MOLECULE_SUCCESS)
-					return(p_ret);
+				if (!solve_molecule_hydrate(ptr + 1, b_ptr - 1, eptr, ecount, suffix * prefix))
+					return(false);
 
 				/*  Solve the molecular on the right  */
-				p_ret = solve_molecule_hydrate(temp, end, eptr, ecount, suffix);
-				if (p_ret != ERRNO_MOLECULE_SUCCESS)
-					return(p_ret);
+				if (!solve_molecule_hydrate(temp, end, eptr, ecount, suffix))
+					return(false);
 
-				return (ERRNO_MOLECULE_SUCCESS);
+				return (true);
 			}
 		}
 	}
@@ -174,41 +173,37 @@ int solve_molecule(char *begin, char *end, bmem *eptr, int *ecount, int suffix) 
 	if (strplen(ptr, end) <= 0) {
 		/*  Only one element, divide it into a symbol and a number  */
 		for (ptr = start; strplen(ptr, end) >= 0; ptr++) {
-			if (strpisnum(ptr, end) == STRLIB_TRUE) {
+			if (strpisnum(ptr, end) == true) {
 				/*  Get the suffix number  */
-				b_prefix = strptoi(ptr, end, NULL);
-				if (b_prefix <= 0)
-					b_prefix = 1;
+				prefix = strptoi(ptr, end, NULL);
+				if (prefix <= 0)
+					prefix = 1;
 
 				for (eap_ptr = (element*)eptr->ptr; eap_ptr < (element*)eptr->ptr + *ecount; eap_ptr++)
-					if (strpqcomp(eap_ptr->begin, eap_ptr->end, start, ptr - 1) == STRLIB_TRUE) {
+					if (strpqcomp(eap_ptr->begin, eap_ptr->end, start, ptr - 1)) {
 						/*  Modify the value  */
-						eap_ptr->count += suffix * b_prefix;
-						return(ERRNO_MOLECULE_SUCCESS);
+						eap_ptr->count += suffix * prefix;
+						return(true);
 					}
 
 				/*  Add the electronic descriptor in the element stack  */
-				if (reallocate_block_memory(eptr, (++(*ecount)) * sizeof(element)) != BLOCKMEM_SUCCESS)
-					return(ERRNO_MOLECULE_MEMORY);
-
+				if (!reallocate_block_memory(eptr, (++(*ecount)) * sizeof(element)))
+					return(false);
 				eap_ptr = (element*)eptr->ptr + *ecount - 1;
 				eap_ptr->begin = start;
 				eap_ptr->end = ptr - 1;
-				eap_ptr->count = b_prefix * suffix;
+				eap_ptr->count = prefix * suffix;
 
 				break;
 			}
 		}
 	} else {
-		p_ret = solve_molecule_hydrate(start, ptr - 1, eptr, ecount, suffix);
-		if (p_ret != ERRNO_MOLECULE_SUCCESS)
-			return(p_ret);
-
-		p_ret = solve_molecule_hydrate(ptr, end, eptr, ecount, suffix);
-		if (p_ret != ERRNO_MOLECULE_SUCCESS)
-			return(p_ret);
+		if (!solve_molecule_hydrate(start, ptr - 1, eptr, ecount, suffix))
+			return(false);
+		if (!solve_molecule_hydrate(ptr, end, eptr, ecount, suffix))
+			return(false);
 	}
 
-	return(ERRNO_MOLECULE_SUCCESS);
+	return(true);
 }
 

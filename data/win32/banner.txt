@@ -1,2 +1,2 @@
-BCE v6.3.1.1
+BCE v6.3.1.2
 (C) 2011-2012 XiaoJSoft Studio.

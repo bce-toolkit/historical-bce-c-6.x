@@ -118,7 +118,7 @@ int main(int argc, char *argv[], char *envp[]) {
 		/*  Check the string  */
 		if (lcc == EOF || (strcmp(p, CMD_EXIT) == 0))
 			break;
-		if (*p == '\0')
+		if (*p == '\0' || *p == CMD_PFX_IGNORE)
 			goto jump;
 		/*  Balance the chemical equation  */
 		balance_ce(p);

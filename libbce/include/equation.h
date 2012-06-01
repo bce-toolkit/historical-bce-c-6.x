@@ -20,11 +20,12 @@
  */
 
 #ifndef _EQUATION_H_
+	#include "bool.h"
 	#include "fraction.h"
 	#include "polynomial.h"
 
 	exp *solve_equations(fact **matrix, int mx, int my, int unknowns, int base_offset_x, int base_offset_y);
-	int check_equation_result(fact **matrix, exp *ret, int mx, int my);
+	bool check_equation_result(fact **matrix, exp *ret, int mx, int my);
 
 	#define _EQUATION_H_
 #endif

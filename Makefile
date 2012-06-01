@@ -12,15 +12,15 @@ make: $(COMMON_INCLUDE) $(OBJ)
 	@$(CC) $(CC_CONF) -o $(OUT) $(OBJ)
 	@echo "OK!"
 
-$(COMPILE_PLATFORM)_bcsh.o: bce/bcsh.c bce/../include/bcsh.h bce/../libbce/include/bce.h bce/../libbce/include/polynomial.h bce/../libbce/include/fraction.h bce/../libbce/include/blockmem.h bce/../libbce/include/blockconf.h bce/../libbce/include/blockmem.h bce/../libbce/include/polynomial.h bce/../include/stream_io.h bce/../include/lang/bce_lang.h
+$(COMPILE_PLATFORM)_bcsh.o: bce/bcsh.c bce/../include/bcsh.h bce/../include/stream_io.h bce/../include/lib/libbce.h bce/../include/lang/bce_lang.h
 	@echo "Compiling bcsh.c..."
 	@$(CC) -c bce/bcsh.c -o $(COMPILE_PLATFORM)_bcsh.o $(CC_CONF)
 
-$(COMPILE_PLATFORM)_stream_io.o: bce/stream_io.c bce/../include/stream_io.h bce/../libbce/include/blockmem.h bce/../libbce/include/blockconf.h
+$(COMPILE_PLATFORM)_stream_io.o: bce/stream_io.c bce/../include/stream_io.h bce/../libbce/include/blockmem.h bce/../libbce/include/bool.h bce/../libbce/include/blockconf.h
 	@echo "Compiling stream_io.c..."
 	@$(CC) -c bce/stream_io.c -o $(COMPILE_PLATFORM)_stream_io.o $(CC_CONF)
 
-$(COMPILE_PLATFORM)_blockmem.o: libbce/lib/blockmem.c libbce/lib/../include/blockmem.h libbce/lib/../include/blockconf.h
+$(COMPILE_PLATFORM)_blockmem.o: libbce/lib/blockmem.c libbce/lib/../include/bool.h libbce/lib/../include/blockmem.h libbce/lib/../include/bool.h libbce/lib/../include/blockconf.h
 	@echo "Compiling blockmem.c..."
 	@$(CC) -c libbce/lib/blockmem.c -o $(COMPILE_PLATFORM)_blockmem.o $(CC_CONF)
 

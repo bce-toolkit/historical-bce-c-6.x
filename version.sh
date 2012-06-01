@@ -2,7 +2,7 @@
 MAJOR=6
 MINOR=3
 REVISION1=1
-REVISION2=1
+REVISION2=2
 
 rm -Rf resources>/dev/null
 mkdir resources>/dev/null

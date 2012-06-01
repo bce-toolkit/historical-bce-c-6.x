@@ -51,10 +51,16 @@ int fix_compare(const void *p1, const void *p2) {
  *	@fc: a pointer points to a integer variable which contains the count of the fix-table
  */
 fix* fix_syntax_ce(char *nptr, exp *s, int count, int *fc) {
-	fix *ret = NULL, *pf;
-	int c = 0, required = true, stack = 0, idx, real;
+	fix *ret, *pf;
+	int c, stack, idx, real;
 	exp *pe;
+	bool required;
 	char *last, *current, *equal, *pc;
+
+	/*  Intialize  */
+	ret = NULL;
+	required = true;
+	c = 0;
 
 	/*  To find the '=' character  */
 	equal = strchr(nptr, SYNTAX_EQUAL);
@@ -128,7 +134,7 @@ fix* fix_syntax_ce(char *nptr, exp *s, int count, int *fc) {
 char* fix_redirect_sprint(fix *p, int fc, int exchangeable) {
 	fix *pf;
 	char *tmp, *symbol, *numpr, *swap, *sign_c;
-	int blast, wequ;
+	bool blast, wequ;
 
 	/*  Allocate the storage  */
 	tmp = (char*) malloc(sizeof(char));

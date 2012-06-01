@@ -19,9 +19,15 @@
  *
  */
 
-#define LANG_ERROR_MODE "Invalid mode '%s'.\n"
-#define LANG_ERROR_OPENFILE "Failed to open '%s'.\n"
-#define LANG_ERROR_CE1 "-\n"
-#define LANG_ERROR_CE2 "-, "
-#define CMD_PROMPT "[CE]# "
-#define CMD_EXIT "exit"
+#ifndef _BCE_LANG_H_
+	#define LANG_ERROR_MODE "Invalid mode '%s'.\n"
+	#define LANG_ERROR_OPENFILE "Failed to open '%s'.\n"
+	#define LANG_ERROR_CE1 "-\n"
+	#define LANG_ERROR_CE2 "-, "
+
+	#define CMD_PROMPT "[CE]# "
+	#define CMD_EXIT "exit"
+	#define CMD_PFX_IGNORE '#'
+
+	#define _BCE_LANG_H
+#endif

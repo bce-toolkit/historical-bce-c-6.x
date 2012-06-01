@@ -20,12 +20,9 @@
  */
 
 #ifndef _MOLECULE_H
+	#include "bool.h"
 	#include "element.h"
 	#include "blockmem.h"
-
-	#define ERRNO_MOLECULE_SUCCESS 0
-	#define ERRNO_MOLECULE_SYNTAX 1
-	#define ERRNO_MOLECULE_MEMORY 2
 
 	#define ELECTRIC_E_PLUS "e+"
 	#define ELECTRIC_E_MINUS "e-"
@@ -37,8 +34,8 @@
 	#define SPECIAL_SIGNATURE_LIQUIT "l"
 	#define SPECIAL_SIGNATURE_GAS "g"
 
-	int solve_molecule(char *begin, char *end, bmem *eptr, int *ecount, int suffix);
-	int solve_molecule_hydrate(char *begin, char *end, bmem *eptr, int *ecount, int suffix);
+	bool solve_molecule(char *begin, char *end, bmem *eptr, int *ecount, int suffix);
+	bool solve_molecule_hydrate(char *begin, char *end, bmem *eptr, int *ecount, int suffix);
 
 	#define _MOLECULE_H
 #endif

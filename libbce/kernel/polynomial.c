@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../include/bool.h"
 #include "../include/blockmem.h"
 #include "../include/kasprintf.h"
 #include "../include/fraction.h"
@@ -171,7 +172,7 @@ expnode* get_insert_position(expnode *p, int count, int flag) {
  *	@nd: the new node
  *	@op: do this operation after deciding the position where it will be located in.
  */
-int push_expression_node(exp *target, expnode nd, factop op) {
+bool push_expression_node(exp *target, expnode nd, factop op) {
 	expnode *ptr, *move;
 	int offset;
 	/*  Check whether the unknown was existed  */
@@ -183,8 +184,8 @@ int push_expression_node(exp *target, expnode nd, factop op) {
 		offset = get_insert_position((expnode*)target->stack.ptr, target->count, nd.flag) - (expnode*)target->stack.ptr;
 
 		/*  Reallocate memory spaces  */
-		if (reallocate_block_memory(&(target->stack), (target->count + 1) * sizeof(expnode)) != BLOCKMEM_SUCCESS)
-			return(EXPMODULE_FAILED);
+		if (!reallocate_block_memory(&(target->stack), (target->count + 1) * sizeof(expnode)))
+			return(false);
 
 		/*  Add the new node  */
 		for (move = (expnode*)target->stack.ptr + target->count; move > (expnode*)target->stack.ptr + offset; move--)
@@ -193,7 +194,7 @@ int push_expression_node(exp *target, expnode nd, factop op) {
 		*((expnode*)target->stack.ptr + offset) = nd;
 		target->count++;
 	}
-	return(EXPMODULE_SUCCESS);
+	return(true);
 }
 
 /*
@@ -205,7 +206,7 @@ int push_expression_node(exp *target, expnode nd, factop op) {
  *	@{flag, pfx}: the new node
  *	@op: do this operation after deciding the position where it will be located in.
  */
-int push_expression_node_ex(exp *target, int flag, fact pfx, factop op) {
+bool push_expression_node_ex(exp *target, int flag, fact pfx, factop op) {
 	expnode nd;
 	/*  Generate a new node  */
 	nd.flag = flag;
@@ -301,7 +302,7 @@ void expression_division(exp *target, fact src) {
  *
  *	@target: the pointer points to the polynomial
  */
-int simplify_expression_node(exp *target) {
+bool simplify_expression_node(exp *target) {
 	int cnt = 0;
 	bmem newstack;
 	expnode *ptr, *tgptr;
@@ -312,14 +313,14 @@ int simplify_expression_node(exp *target) {
 			cnt++;
 
 	if (cnt == target->count)
-		return(EXPMODULE_SUCCESS);
+		return(true);
 
 	/*  Copy the data  */
 	if (!cnt) {
 		free_expression(target);
 	} else {
-		if (allocate_block_memory(&newstack, cnt * sizeof(expnode), DEFAULT_PAGE_SIZE) != BLOCKMEM_SUCCESS)
-			return(EXPMODULE_FAILED);
+		if (!allocate_block_memory(&newstack, cnt * sizeof(expnode), DEFAULT_PAGE_SIZE))
+			return(false);
 		for (ptr = (expnode*)target->stack.ptr, tgptr = (expnode*)newstack.ptr; ptr < (expnode*)target->stack.ptr + target->count; ptr++)
 			if (fraction_compare(ptr->pfx, F_ZERO) != 0)
 				*(tgptr++) = *ptr;
@@ -327,7 +328,7 @@ int simplify_expression_node(exp *target) {
 		target->stack = newstack;
 		target->count = cnt;
 	}
-	return(EXPMODULE_SUCCESS);
+	return(true);
 }
 
 /*
@@ -335,14 +336,14 @@ int simplify_expression_node(exp *target) {
  *
  *	Do operation: @exp1 = @exp1 @op1 (@exp2 @op2 @ft)
  */
-int expression_double_operation(exp *exp1, factop op1, exp exp2, factop op2, fact ft) {
+bool expression_double_operation(exp *exp1, factop op1, exp exp2, factop op2, fact ft) {
 	expnode *ptr;
 	/*  op1 = {fraction_plus, fraction_minus), op2 = {fraction_multiplination, fraction_division}  */
 	push_expression_constant(exp1, op2(exp2.cst, ft), op1);
 	for (ptr = (expnode*)exp2.stack.ptr; ptr < (expnode*)exp2.stack.ptr + exp2.count; ptr++)
-		if (push_expression_node_ex(exp1, ptr->flag, op2(ptr->pfx, ft), op1) != EXPMODULE_SUCCESS)
-			return(EXPMODULE_FAILED);
-	return(EXPMODULE_SUCCESS);
+		if (!push_expression_node_ex(exp1, ptr->flag, op2(ptr->pfx, ft), op1))
+			return(false);
+	return(true);
 }
 
 /*
@@ -356,7 +357,8 @@ int expression_double_operation(exp *exp1, factop op1, exp exp2, factop op2, fac
 void finishing_expression_stack(exp *src, int len) {
 	expnode **fsort, **sp;
 	exp *ptr;
-	int min_flag, sorted = 0, mf;
+	int min_flag, sorted;
+	bool mf;
 
 	fsort = (expnode**) malloc(len * sizeof(expnode*));
 	if (!fsort)
@@ -366,26 +368,28 @@ void finishing_expression_stack(exp *src, int len) {
 	for (ptr = src, sp = fsort; ptr < src + len; ptr++, sp++)
 		*sp = (expnode*) ptr->stack.ptr;
 
+	sorted = 0;
+
 	/*  Sort them and make their ID consecutively  */
 	do {
-		for (mf = EXPMODULE_FALSE, ptr = src, sp = fsort; ptr < src + len; ptr++, sp++)
+		for (mf = false, ptr = src, sp = fsort; ptr < src + len; ptr++, sp++)
 			if (*sp < (expnode*)ptr->stack.ptr + ptr->count) {
-				if (mf == EXPMODULE_FALSE) {
-					mf = EXPMODULE_TRUE;
+				if (mf == false) {
+					mf = true;
 					min_flag = (*sp)->flag;
 				} else {
 					if ((*sp)->flag < min_flag)
 						min_flag = (*sp)->flag;
 				}
 			}
-		if (mf == EXPMODULE_TRUE)
+		if (mf == true)
 			for (sorted++, ptr = src, sp = fsort; ptr < src + len; ptr++, sp++)
 				if (*sp < (expnode*)ptr->stack.ptr + ptr->count)
 					if ((*sp)->flag == min_flag) {
 						(*sp)->flag = sorted;
 						(*sp)++;
 					}
-	} while(mf == EXPMODULE_TRUE);
+	} while(mf == true);
 
 	free(fsort);
 }
@@ -398,17 +402,17 @@ void finishing_expression_stack(exp *src, int len) {
  *	@...
  *	@destroy_after_copy: destroy 'src' after copying it
  */
-int expression_memcpy(exp *target, exp src, int destroy_after_copy) {
+bool expression_memcpy(exp *target, exp src, bool destroy_after_copy) {
 	free_expression(target);
 	*target = src;
 	if (src.count) {
-		if (allocate_block_memory(&(target->stack), src.count * sizeof(expnode), DEFAULT_PAGE_SIZE) != BLOCKMEM_SUCCESS)
-			return(EXPMODULE_FAILED);
+		if (!allocate_block_memory(&(target->stack), src.count * sizeof(expnode), DEFAULT_PAGE_SIZE))
+			return(false);
 		memcpy(target->stack.ptr, src.stack.ptr, src.count * sizeof(expnode));
 	}
-	if (destroy_after_copy == EXPMODULE_TRUE)
+	if (destroy_after_copy)
 		free_expression(&src);
-	return(EXPMODULE_SUCCESS);
+	return(true);
 }
 
 /*
@@ -451,14 +455,14 @@ void expression_bce_setx2one(exp *src, int len) {
  *	@len: the item count of the polynomial set
  *	@inc_args: does it include the prefix numbers?
  */
-void expression_to_number(exp *src, int len, int inc_args) {
+void expression_to_number(exp *src, int len, bool inc_args) {
 	exp *ptr;
 	expnode *subptr;
 	fact mt;
 	int ml = 1;
 	for (ptr = src; ptr < src + len; ptr++) {
 		ml = mmul(ptr->cst.denominator, ml);
-		if (inc_args == EXPMODULE_TRUE)
+		if (inc_args)
 			for (subptr = (expnode*)(ptr->stack.ptr); subptr < (expnode*)(ptr->stack.ptr) + ptr->count; subptr++)
 				ml = mmul(subptr->pfx.denominator, ml);
 	}

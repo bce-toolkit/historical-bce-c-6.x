@@ -1,7 +1,7 @@
 #!/bin/sh
 MAJOR=6
-MINOR=2
-REVISION1=26
+MINOR=3
+REVISION1=1
 REVISION2=2
 
 rm -Rf resources>/dev/null

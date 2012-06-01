@@ -43,6 +43,7 @@ exp* balance_chemical_equation(char *nptr, int *count) {
 	int mx, my;
 	fact **mtx;
 	exp *ret;
+
 	mtx = get_balance_matrix(nptr, &mx, &my);
 	if (!mtx)
 		return(NULL);
@@ -53,7 +54,7 @@ exp* balance_chemical_equation(char *nptr, int *count) {
 		return(NULL);
 	}
 
-	if (check_equation_result(mtx, ret, mx, my) != EXPMODULE_TRUE) {
+	if (!check_equation_result(mtx, ret, mx, my)) {
 		free_matrix(mtx, my);
 		free_expression_stack(ret, mx - 1);
 		return(NULL);
@@ -63,7 +64,7 @@ exp* balance_chemical_equation(char *nptr, int *count) {
 
 	finishing_expression_stack(ret, mx - 1);
 	expression_bce_setx2one(ret, mx - 1);
-	expression_to_number(ret, mx - 1, EXPMODULE_TRUE);
+	expression_to_number(ret, mx - 1, true);
 
 	*count = mx - 1;
 

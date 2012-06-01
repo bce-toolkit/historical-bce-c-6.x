@@ -23,6 +23,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
+#include "../include/bool.h"
 #include "../include/string_ext.h"
 
 /*
@@ -58,7 +59,7 @@ void pspush(const char *begin, const char *end) {
  *
  *	Compare a string with the string between [@begin, @end].
  */
-int strpcomp(const char *begin, const char *end, const char *data) {
+bool strpcomp(const char *begin, const char *end, const char *data) {
 	return(strpqcomp(begin, end, data, data + strlen(data) - 1));
 }
 
@@ -67,17 +68,16 @@ int strpcomp(const char *begin, const char *end, const char *data) {
  *
  *	Compare the string [@begin1, @end1] with the string between [@begin2, @end2].
  */
-int strpqcomp(const char *begin1, const char *end1, const char *begin2, const char *end2) {
+bool strpqcomp(const char *begin1, const char *end1, const char *begin2, const char *end2) {
 	for (; *begin1 == *begin2; begin1++, begin2++)
 		if (begin1 == end1 || begin2 == end2) {
-			if (begin1 != end1 || begin2 != end2) {
-				return(STRLIB_FALSE);
-			} else {
-				return(STRLIB_TRUE);
-			}
+			if (begin1 != end1 || begin2 != end2)
+				return(false);
+			else
+				return(true);
 		}
 
-	return(STRLIB_FALSE);
+	return(false);
 }
 
 /*
@@ -85,14 +85,14 @@ int strpqcomp(const char *begin1, const char *end1, const char *begin2, const ch
  *
  *	Determine whether the string between [@begin, @end] is a readable number.
  */
-int strpisnum(const char *begin, const char *end) {
+bool strpisnum(const char *begin, const char *end) {
 	for (; begin <= end; begin++)
 		if (isdigit((int)(*begin)))
 			continue;
 		else
-			return(STRLIB_FALSE);
+			return(false);
 
-	return(STRLIB_TRUE);
+	return(true);
 }
 
 /*

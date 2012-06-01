@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../include/bool.h"
 #include "../include/blockmem.h"
 #include "../include/matrix_io.h"
 #include "../include/mmdiv.h"
@@ -67,7 +68,7 @@ exp* solve_equations(fact **matrix, int mx, int my, int unknowns, int base_offse
 	if (fraction_compare(read_matrix(matrix, base_offset_x, 0), F_ZERO) == 0) {
 		*ret = expression_create(0, 1);
 		/*  Push a new unknown symbol into the expression stack  */
-		if (push_expression_node_ex(ret, unknowns + 1, fraction_create(1, 1), fraction_plus) != EXPMODULE_SUCCESS) {
+		if (!push_expression_node_ex(ret, unknowns + 1, fraction_create(1, 1), fraction_plus)) {
 			free_expression_stack(ret, mx - 1);
 			return(NULL);
 		}
@@ -79,7 +80,7 @@ exp* solve_equations(fact **matrix, int mx, int my, int unknowns, int base_offse
 				return(NULL);
 			}
 			for (rpptr = solve_equ, retptr = ret + 1, idx = 0; idx < mx - 2; idx++, rpptr++, retptr++)
-				if (expression_memcpy(retptr, *rpptr, EXPMODULE_FALSE) != EXPMODULE_SUCCESS) {
+				if (!expression_memcpy(retptr, *rpptr, false)) {
 					free_expression_stack(ret, mx - 1);
 					return(NULL);
 				}
@@ -96,8 +97,8 @@ exp* solve_equations(fact **matrix, int mx, int my, int unknowns, int base_offse
 			*rpptr = expression_create(0, 1);
 			/*  Generate a new unknown  */
 			/*  and then copy values of other unknowns to the result  */
-			if (push_expression_node_ex(rpptr, ++unknowns, fraction_create(1, 1), fraction_plus) == EXPMODULE_SUCCESS) {
-				if (expression_double_operation(&step, fraction_minus, *rpptr, fraction_multiplination, *ptr_equ) != EXPMODULE_SUCCESS) {
+			if (push_expression_node_ex(rpptr, ++unknowns, fraction_create(1, 1), fraction_plus)) {
+				if (!expression_double_operation(&step, fraction_minus, *rpptr, fraction_multiplination, *ptr_equ)) {
 					free_expression_stack(ret, mx - 1);
 					free_expression(&step);
 					return(NULL);
@@ -109,7 +110,7 @@ exp* solve_equations(fact **matrix, int mx, int my, int unknowns, int base_offse
 		}
 		expression_division(&step, read_matrix(matrix, base_offset_x, 0));
 
-		if (simplify_expression_node(&step) != EXPMODULE_SUCCESS) {
+		if (!simplify_expression_node(&step)) {
 			free_expression_stack(ret, mx - 1);
 			free_expression(&step);
 			return(NULL);
@@ -138,13 +139,13 @@ exp* solve_equations(fact **matrix, int mx, int my, int unknowns, int base_offse
 		/*  Calculate the value of the unknown in the first column  */
 		step = expression_create(matrix_offset(matrix, base_offset_x + mx - 1, 0)->numerator, matrix_offset(matrix, base_offset_x + mx - 1, 0)->denominator);
 		for (rpptr = solve_equ, ptr_equ = matrix_offset(matrix, base_offset_x + 1, 0); ptr_equ <= matrix_offset(matrix, base_offset_x + mx - 2, 0); rpptr++, ptr_equ++)
-			if (expression_double_operation(&step, fraction_minus, *rpptr, fraction_multiplination, *ptr_equ) != EXPMODULE_SUCCESS) {
+			if (!expression_double_operation(&step, fraction_minus, *rpptr, fraction_multiplination, *ptr_equ)) {
 				free_expression_stack(ret, mx - 1);
 				free_expression(&step);
 				return(NULL);
 			}
 
-		if (simplify_expression_node(&step) != EXPMODULE_SUCCESS) {
+		if (!simplify_expression_node(&step)) {
 			free_expression_stack(ret, mx - 1);
 			free_expression(&step);
 			return(NULL);
@@ -152,7 +153,7 @@ exp* solve_equations(fact **matrix, int mx, int my, int unknowns, int base_offse
 
 		/*  Copy values of other unknowns to the result  */
 		for (*ret = step, rpptr = solve_equ, retptr = ret + 1, idx = 0; idx < mx - 2; idx++, rpptr++, retptr++)
-			if (expression_memcpy(retptr, *rpptr, EXPMODULE_FALSE) != EXPMODULE_SUCCESS) {
+			if (!expression_memcpy(retptr, *rpptr, false)) {
 				free_expression_stack(ret, mx - 1);
 				return(NULL);
 			}
@@ -172,7 +173,7 @@ exp* solve_equations(fact **matrix, int mx, int my, int unknowns, int base_offse
  *	@mx: the number of columns of the matrix
  *	@my: the number of rows of the matrix
  */
-int check_equation_result(fact **matrix, exp *ret, int mx, int my) {
+bool check_equation_result(fact **matrix, exp *ret, int mx, int my) {
 	fact *ptr_equ, **ptr_matrix;
 	exp *rpptr, step;
 	/*  Check results  */
@@ -180,23 +181,23 @@ int check_equation_result(fact **matrix, exp *ret, int mx, int my) {
 		/*  Calculate the result of the equation  */
 		step = expression_create(0, 1);
 		for (ptr_equ = *ptr_matrix, rpptr = ret; ptr_equ < (*ptr_matrix) + mx - 1; ptr_equ++, rpptr++)
-			if (expression_double_operation(&step, fraction_plus, *rpptr, fraction_multiplination, *ptr_equ) != EXPMODULE_SUCCESS) {
+			if (!expression_double_operation(&step, fraction_plus, *rpptr, fraction_multiplination, *ptr_equ)) {
 				free_expression(&step);
-				return(EXPMODULE_FALSE);
+				return(false);
 			}
 
-		if (simplify_expression_node(&step) != EXPMODULE_SUCCESS) {
+		if (!simplify_expression_node(&step)) {
 			free_expression(&step);
-			return(EXPMODULE_FALSE);
+			return(false);
 		}
 
 		/*  Compare it with the constant of the equation  */
 		if (!(step.count == 0 && fraction_compare(step.cst, *((*ptr_matrix) + mx - 1)) == 0)) {
 			free_expression(&step);
-			return(EXPMODULE_FALSE);
+			return(false);
 		}
 		free_expression(&step);
 	}
-	return(EXPMODULE_TRUE);
+	return(true);
 }
 

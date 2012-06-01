@@ -20,15 +20,15 @@
  */
 
 #ifndef _STRING_EXT_H
-	#define STRLIB_TRUE 1
-	#define STRLIB_FALSE 0
+	#include "bool.h"
+
 	#define strplen(begin, end) ((end)-(begin)+1)
 
 	char* strpush(const char *begin, const char *end);
 	void pspush(const char *begin, const char *end);
-	int strpcomp(const char *begin, const char *end, const char *data);
-	int strpisnum(const char *begin, const char *end);
-	int strpqcomp(const char *begin1, const char *end1, const char *begin2, const char *end2);
+	bool strpcomp(const char *begin, const char *end, const char *data);
+	bool strpqcomp(const char *begin1, const char *end1, const char *begin2, const char *end2);
+	bool strpisnum(const char *begin, const char *end);
 	int strptoi(char *begin, char *end, char **endptr);
 
 	#define _STRING_EXT_H

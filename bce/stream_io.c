@@ -42,7 +42,7 @@ char *linein(FILE *fp, char *lcc) {
 				*lcc = (char) ch;
 			ch = '\0';
 		}
-		if (reallocate_block_memory(&buffer, (++n) * sizeof(char)) != BLOCKMEM_SUCCESS)
+		if (!reallocate_block_memory(&buffer, (++n) * sizeof(char)))
 			return(NULL);
 		*((char*)buffer.ptr + n - 1) = (char) ch;
 	} while(ch != '\0');

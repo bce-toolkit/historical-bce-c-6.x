@@ -43,10 +43,16 @@
  */
 fact** get_balance_matrix(char *nptr, int *high_x, int *high_y) {
 	fact *ip_ptr, *header, **ret;
-	char *ptr = NULL, *equal = NULL, *dot = NULL;
-	int c = 0, ec = 0, stack = 0, solve_count, counter, idx;
-	bmem solver = empty_block_memory(DEFAULT_PAGE_SIZE), prefetch = empty_block_memory(DEFAULT_PAGE_SIZE);
+	char *ptr, *equal, *dot;
+	int c, ec, stack, solve_count, counter, idx;
+	bmem solver, prefetch;
 	element *p1, *p2;
+
+	/*  Initialize  */
+	c = 0;
+	ec = 0;
+	solver = empty_block_memory(DEFAULT_PAGE_SIZE);
+	prefetch = empty_block_memory(DEFAULT_PAGE_SIZE);
 
 	/*  Look for the separator  */
 	equal = strchr(nptr, SYNTAX_EQUAL);
@@ -59,7 +65,7 @@ fact** get_balance_matrix(char *nptr, int *high_x, int *high_y) {
 		if (stack)
 			continue;
 		if (strchr(SYNTAX_SPLITER, *ptr) != NULL || *(ptr + 1) == '\0') {
-			if (solve_molecule_hydrate(dot, (*(ptr + 1) == '\0') ? ptr : ptr - 1, &prefetch, &ec, 1) != ERRNO_MOLECULE_SUCCESS) {
+			if (!solve_molecule_hydrate(dot, (*(ptr + 1) == '\0') ? ptr : ptr - 1, &prefetch, &ec, 1)) {
 				free_block_memory(&prefetch);
 				return(NULL);
 			}
@@ -90,7 +96,7 @@ fact** get_balance_matrix(char *nptr, int *high_x, int *high_y) {
 			continue;
 		if (strchr(SYNTAX_SPLITER, *ptr) != NULL || *(ptr + 1) == '\0') {
 			solve_count = 0;
-			if (solve_molecule_hydrate(dot, (*(ptr + 1) == '\0') ? ptr : ptr - 1, &solver, &solve_count, 1) != ERRNO_MOLECULE_SUCCESS) {
+			if (!solve_molecule_hydrate(dot, (*(ptr + 1) == '\0') ? ptr : ptr - 1, &solver, &solve_count, 1)) {
 				free_block_memory(&solver);
 				free_block_memory(&prefetch);
 				free_matrix(ret, ec);
@@ -98,7 +104,7 @@ fact** get_balance_matrix(char *nptr, int *high_x, int *high_y) {
 			}
 			for (p1 = (element*)solver.ptr; p1 < (element*)solver.ptr + solve_count; p1++)
 				for (p2 = (element*)prefetch.ptr, idx = 0; p2 < (element*)prefetch.ptr + ec; p2++, idx++)
-					if (strpqcomp(p1->begin, p1->end, p2->begin, p2->end) == STRLIB_TRUE) {
+					if (strpqcomp(p1->begin, p1->end, p2->begin, p2->end)) {
 						if (!equal) {
 							write_matrix(ret, counter, idx, fraction_create(p1->count, 1));
 						} else {

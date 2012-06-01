@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "../include/bool.h"
 #include "../include/blockmem.h"
 
 /*
@@ -47,15 +48,15 @@ bmem empty_block_memory(size_t size_per_page) {
  *	@size: numbers of bytes to allocate
  *	@size_per_page: the size of each page
  */
-int allocate_block_memory(bmem *p, size_t size, size_t size_per_page) {
+bool allocate_block_memory(bmem *p, size_t size, size_t size_per_page) {
 	/*  Calculate the number of pages what we need  */
 	p->psize = size_per_page;
 	p->pnum = size / size_per_page + 1;
 	/*  Allocate memory spaces  */
 	p->ptr = malloc(p->pnum * p->psize);
 	if (!p->ptr)
-		return(BLOCKMEM_ALLOCATE_ERROR);
-	return(BLOCKMEM_SUCCESS);
+		return(false);
+	return(true);
 }
 
 /*
@@ -66,11 +67,11 @@ int allocate_block_memory(bmem *p, size_t size, size_t size_per_page) {
  *	@p: the pointer points to the data struct of the container
  *	@size: numbers of bytes the new block will be
  */
-int reallocate_block_memory(bmem *p, size_t size) {
+bool reallocate_block_memory(bmem *p, size_t size) {
 	bmem new;
 	/*  The block which is uninitialized can't be reallocated  */
 	if (!p->psize)
-		return(BLOCKMEM_UNINITIALIZED);
+		return(false);
 	/*  Calculate the number of pages what we need  */
 	new.psize = p->psize;
 	new.pnum = size / new.psize + 1;
@@ -79,12 +80,12 @@ int reallocate_block_memory(bmem *p, size_t size) {
 		/*  PS: I call this step 'change page'  */
 		new.ptr = realloc(p->ptr, new.psize * new.pnum);
 		if (!new.ptr)
-			return(BLOCKMEM_ALLOCATE_ERROR);
+			return(false);
 	} else {
 		new.ptr = p->ptr;
 	}
 	*p = new;
-	return(BLOCKMEM_SUCCESS);
+	return(true);
 }
 
 /*

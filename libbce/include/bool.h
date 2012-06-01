@@ -27,3 +27,8 @@
 	#define false 0
 #endif
 
+#ifndef bool
+	#define bool char
+	#define _BOOL_H_
+#endif
+
